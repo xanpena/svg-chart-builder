@@ -18,19 +18,19 @@ Here are some examples of charts generated using SVG Chart Builder:
 
 ### Bar Chart
 
-![Bar Chart](examples/bar-chart.svg)
+![Bar Chart](/examples/bar-chart.svg)
 
 ### Doughnut Chart
 
-![Doughnut Chart](examples/doughnut-chart.svg)
+![Doughnut Chart](/examples/doughnut-chart.svg)
 
 ### Horizontal Bar Chart
 
-![Horizontal Bar Chart](examples/horizontal-bar-chart.svg)
+![Horizontal Bar Chart](/examples/horizontal-bar-chart.svg)
 
 ### Pie Chart
 
-![Pie Chart](examples/pie-chart.svg)
+![Pie Chart](/examples/pie-chart.svg)
 
 
 ## Usage
