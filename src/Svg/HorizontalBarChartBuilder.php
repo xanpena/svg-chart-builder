@@ -29,6 +29,11 @@ class HorizontalBarChartBuilder {
         $this->series = array_keys($this->data);
     }
 
+    /**
+     * Generate the SVG representation of the chart.
+     *
+     * @return string The SVG representation of the chart.
+     */
     public function makeSvg()
     {
         $this->openSvgTag()
@@ -41,6 +46,11 @@ class HorizontalBarChartBuilder {
         return $this->svg;
     }
 
+    /**
+     * Generate the X and Y axes of the bar chart.
+     *
+     * @return $this
+     */
     private function makeAxis()
     {
         $this->svg .= '<line x1="100" y1="' . ($this->height - 20) . '" x2="100" y2="20" stroke="black"></line>';
@@ -49,6 +59,11 @@ class HorizontalBarChartBuilder {
         return $this;
     }
 
+    /**
+     * Open the SVG tag with the specified width and height.
+     *
+     * @return $this
+     */
     private function openSvgTag()
     {
         $this->svg = '<svg width="'.($this->width + 20).'" height="'.($this->height + 20).'" xmlns="http://www.w3.org/2000/svg">';
@@ -56,6 +71,11 @@ class HorizontalBarChartBuilder {
         return $this;
     }
 
+    /**
+     * Close the SVG tag.
+     *
+     * @return $this
+     */
     private function closeSvgTag()
     {
         $this->svg .= '</svg>';
@@ -63,10 +83,15 @@ class HorizontalBarChartBuilder {
         return $this;
     }
 
+    /**
+     * Generate the chart on SVG canvas.
+     *
+     * @return $this
+     */
     private function makeCanvas()
     {
         $numSeries = count($this->series);
-        $heightRatio = ($this->height - 120) / $numSeries; // Ancho de las barras
+        $heightRatio = ($this->height - 120) / $numSeries;
         $spaceRatio = 10;
 
         $baseX = 100;
@@ -81,7 +106,7 @@ class HorizontalBarChartBuilder {
             }
 
             $proportion = $data / max($this->data);
-            $barHeight = $proportion * ($this->width - 120); // Ajuste de altura
+            $barHeight = $proportion * ($this->width - 120);
             $x = $baseX;
 
             $this->svg .= '<rect x="'.$x.'" y="'.$y.'" width="'.$barHeight.'" height="'.$heightRatio.'" fill="'.$this->colors[$counter].'"/>';
@@ -93,11 +118,15 @@ class HorizontalBarChartBuilder {
         return $this;
     }
 
-
+    /**
+     * Generate the labels below the Y axis of the bar chart.
+     *
+     * @return $this
+     */
     private function makeLabels()
     {
         $numSeries = count($this->series);
-        $heightRatio = ($this->height - 120) / $numSeries; // Ajuste de alto
+        $heightRatio = ($this->height - 120) / $numSeries;
         $spaceRatio = 10;
 
         $baseX = 95;
@@ -119,6 +148,11 @@ class HorizontalBarChartBuilder {
         return $this;
     }
 
+    /**
+     * Generate the X axis labels.
+     *
+     * @return $this
+     */
     private function makeSeries()
     {
         $baseX = 95;

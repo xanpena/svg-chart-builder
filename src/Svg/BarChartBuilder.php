@@ -29,6 +29,11 @@ class BarChartBuilder {
         $this->series = array_keys($this->data);
     }
 
+    /**
+     * Generate the SVG representation of the chart.
+     *
+     * @return string The SVG representation of the chart.
+     */
     public function makeSvg()
     {
         $this->openSvgTag()
@@ -41,6 +46,11 @@ class BarChartBuilder {
         return $this->svg;
     }
 
+    /**
+     * Generate the X and Y axes of the bar chart.
+     *
+     * @return $this
+     */
     private function makeAxis()
     {
         $this->svg .= '<line x1="50" y1="250" x2="' . ($this->width + 20) . '" y2="250" stroke="black" />';
@@ -49,6 +59,11 @@ class BarChartBuilder {
         return $this;
     }
 
+    /**
+     * Open the SVG tag with the specified width and height.
+     *
+     * @return $this
+     */
     private function openSvgTag()
     {
         $this->svg = '<svg width="'.($this->width + 20).'" height="'.($this->height + 20).'" xmlns="http://www.w3.org/2000/svg">';
@@ -56,6 +71,11 @@ class BarChartBuilder {
         return $this;
     }
 
+    /**
+     * Close the SVG tag.
+     *
+     * @return $this
+     */
     private function closeSvgTag()
     {
         $this->svg .= '</svg>';
@@ -63,10 +83,15 @@ class BarChartBuilder {
         return $this;
     }
 
+    /**
+     * Generate the chart on SVG canvas.
+     *
+     * @return $this
+     */
     private function makeCanvas()
     {
         $numSeries = count($this->series);
-        $availableWidth = $this->width - 100; // Espacio disponible para las series y las etiquetas
+        $availableWidth = $this->width - 100;
         $widthRatio = $availableWidth / $numSeries;
         $spaceRatio = 10;
 
@@ -87,7 +112,6 @@ class BarChartBuilder {
 
             $this->svg .= '<rect x="'.$x.'" y="'.$y.'" width="'.$widthRatio.'" height="'.$barHeight.'" fill="'.$this->colors[$counter].'"/>';
 
-            // Añadir el valor de la barra en el medio de sí misma
             $valueX = $x + $widthRatio / 2;
             $valueY = $y + $barHeight / 2;
 
@@ -100,10 +124,15 @@ class BarChartBuilder {
         return $this;
     }
 
+    /**
+     * Generate the labels below the X axis of the chart.
+     *
+     * @return $this
+     */
     private function makeLabels()
     {
         $numSeries = count($this->series);
-        $availableWidth = $this->width - 100; // Espacio disponible para las series y las etiquetas
+        $availableWidth = $this->width - 100;
         $widthRatio = $availableWidth / $numSeries;
         $spaceRatio = 10;
 
@@ -113,16 +142,15 @@ class BarChartBuilder {
         $x = $baseX + $widthRatio / 2;
         $y = $baseY + 30;
 
-        $rotation = -45; // Grados de inclinación
-        $verticalOffset = 10 * abs(sin(deg2rad($rotation))); // Desplazamiento vertical
-        $horizontalOffset = -($widthRatio / 4); // Desplazamiento horizontal
+        $rotation = -45;
+        $verticalOffset = 10 * abs(sin(deg2rad($rotation)));
+        $horizontalOffset = -($widthRatio / 4);
 
         foreach ($this->series as $key => $series) {
             if ($key >= count($this->colors)) {
                 $key = 0;
             }
 
-            // Aplicamos la rotación y los desplazamientos a la etiqueta
             $this->svg .= '<text transform="rotate('.$rotation.', '.$x.', '.$y.')" x="'.($x + $horizontalOffset).'" y="'.($y + $verticalOffset).'" font-family="Arial" font-size="14" fill="'.$this->colors[$key].'" text-anchor="middle">'.$series.'</text>';
 
             $x += $widthRatio + $spaceRatio;
@@ -131,7 +159,11 @@ class BarChartBuilder {
         return $this;
     }
 
-
+    /**
+     * Generate the Y axis labels.
+     *
+     * @return $this
+     */
     private function makeSeries()
     {
         $baseX = 40;

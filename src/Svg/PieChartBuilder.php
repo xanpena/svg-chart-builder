@@ -27,6 +27,11 @@ class PieChartBuilder {
         $this->data = $data;
     }
 
+    /**
+     * Generate the SVG representation of the chart.
+     *
+     * @return string The SVG representation of the chart.
+     */
     public function makeSvg()
     {
         $this->openSvgTag()
@@ -37,6 +42,11 @@ class PieChartBuilder {
         return $this->svg;
     }
 
+    /**
+     * Open the SVG tag with the specified width and height.
+     *
+     * @return $this
+     */
     private function openSvgTag()
     {
         $this->svg = '<svg width="'.($this->width).'" height="'.($this->height).'" xmlns="http://www.w3.org/2000/svg">';
@@ -44,6 +54,11 @@ class PieChartBuilder {
         return $this;
     }
 
+    /**
+     * Close the SVG tag.
+     *
+     * @return $this
+     */
     private function closeSvgTag()
     {
         $this->svg .= '</svg>';
@@ -51,6 +66,11 @@ class PieChartBuilder {
         return $this;
     }
 
+    /**
+     * Draw the slices of the pie chart based on the data.
+     *
+     * @return $this
+     */
     private function drawSlices()
     {
         $totalValue = array_sum($this->data);
@@ -89,6 +109,11 @@ class PieChartBuilder {
         return $this;
     }
 
+    /**
+     * Draw the labels for each slice on the chart.
+     *
+     * @return $this
+     */
     private function drawLabels()
     {
         $totalValue = array_sum($this->data);

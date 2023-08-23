@@ -19,7 +19,7 @@ class DoughnutChartBuilder {
     private array $data = [];
     private int $width = 400;
     private int $height = 400;
-    private int $innerRadius = 100; // Radio interior para el gráfico de dona
+    private int $innerRadius = 100;
 
     private string $svg = '';
 
@@ -28,6 +28,11 @@ class DoughnutChartBuilder {
         $this->data = $data;
     }
 
+    /**
+     * Generate the SVG representation of the chart.
+     *
+     * @return string The SVG representation of the chart.
+     */
     public function makeSvg()
     {
         $this->openSvgTag()
@@ -38,6 +43,11 @@ class DoughnutChartBuilder {
         return $this->svg;
     }
 
+    /**
+     * Open the SVG tag with the specified width and height.
+     *
+     * @return $this
+     */
     private function openSvgTag()
     {
         $this->svg = '<svg width="'.($this->width).'" height="'.($this->height).'" xmlns="http://www.w3.org/2000/svg">';
@@ -45,6 +55,11 @@ class DoughnutChartBuilder {
         return $this;
     }
 
+    /**
+     * Close the SVG tag.
+     *
+     * @return $this
+     */
     private function closeSvgTag()
     {
         $this->svg .= '</svg>';
@@ -52,6 +67,11 @@ class DoughnutChartBuilder {
         return $this;
     }
 
+    /**
+     * Draw the slices of the pie chart based on the data.
+     *
+     * @return $this
+     */
     private function drawSlices()
     {
         $totalValue = array_sum($this->data);
@@ -90,6 +110,11 @@ class DoughnutChartBuilder {
         return $this;
     }
 
+    /**
+     * Draw the labels for each slice on the chart.
+     *
+     * @return $this
+     */
     private function drawLabels()
     {
         $totalValue = array_sum($this->data);
