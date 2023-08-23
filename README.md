@@ -12,27 +12,6 @@ To install using Composer, run the following command in your terminal:
     composer require xanpena/svg-chart-builder
 ```
 
-## Examples
-
-Here are some examples of charts generated using SVG Chart Builder:
-
-### Bar Chart
-
-![Bar Chart](/examples/bar-chart.svg)
-
-### Doughnut Chart
-
-![Doughnut Chart](/examples/doughnut-chart.svg)
-
-### Horizontal Bar Chart
-
-![Horizontal Bar Chart](/examples/horizontal-bar-chart.svg)
-
-### Pie Chart
-
-![Pie Chart](/examples/pie-chart.svg)
-
-
 ## Usage
 
 SVGChartBuilder provides several types of charts that you can create:
