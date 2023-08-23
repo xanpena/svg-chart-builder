@@ -4,44 +4,105 @@ declare(strict_types=1);
 
 namespace Xanpena\SVGChartBuilder;
 
-use Xanpena\SVGChartBuilder\Svg\BarChartBuilder;
-use Xanpena\SVGChartBuilder\Svg\HorizontalBarChartBuilder;
+use Xanpena\SVGChartBuilder\Svg\{
+    BarChartBuilder,
+    DoughnutChartBuilder,
+    HorizontalBarChartBuilder,
+    PieChartBuilder
+};
 
 class SVGChartBuilder
 {
+    const CHART_TYPE_BAR = 'bar';
+    const CHART_TYPE_DOUGHNUT = 'doughnut';
+    const CHART_TYPE_HORIZONTALBAR = 'horizontal-bar';
+    const CHART_TYPE_PIE = 'pie';
 
-    const BAR_CHART           = 'bar';
-    const HORIZONTALBAR_CHART = 'horizontal-bar';
-    /*
-    |--------------------------------------------------------------------------
-    | SVGChartBuilder
-    |--------------------------------------------------------------------------
-    |
-    | This is the main class of the SVGChartBuilder that will allow you to
-    | generate pretty charts from backend.
-    |
-    */
+    protected $validChartTypes = [
+        self::CHART_TYPE_BAR,
+        self::CHART_TYPE_DOUGHNUT,
+        self::CHART_TYPE_HORIZONTALBAR,
+        self::CHART_TYPE_PIE,
+    ];
 
-    public function __construct()
+    protected $type;
+    protected $data;
+
+    /**
+     * Constructor.
+     *
+     * @param string $type Type of chart to create.
+     * @param array $data Data for the chart.
+     * @throws \InvalidArgumentException If the type or data is invalid.
+     */
+    public function __construct($type, $data)
     {
+        $this->validateType($type);
+        $this->validateData($data);
+
+        $this->type = $type;
+        $this->data = $data;
     }
 
-    public function create($type, $data)
+    /**
+     * Create and return the SVG chart.
+     *
+     * @return string SVG representation of the chart.
+     */
+    public function create()
     {
         $chart = '';
 
-        switch ($type) {
-            case static::BAR_CHART:
-                $chart = (new BarChartBuilder($data))->makeSvg();
+        switch ($this->type) {
+            case self::CHART_TYPE_BAR:
+                $chart = (new BarChartBuilder($this->data))->makeSvg();
                 break;
-            case static::HORIZONTALBAR_CHART:
-                $chart = (new HorizontalBarChartBuilder($data))->makeSvg();
+            case self::CHART_TYPE_DOUGHNUT:
+                $chart = (new DoughnutChartBuilder($this->data))->makeSvg();
                 break;
-
+            case self::CHART_TYPE_HORIZONTALBAR:
+                $chart = (new HorizontalBarChartBuilder($this->data))->makeSvg();
+                break;
+            case self::CHART_TYPE_PIE:
+                $chart = (new PieChartBuilder($this->data))->makeSvg();
+                break;
         }
+
         return $chart;
     }
 
+    /**
+     * Validate the chart type.
+     *
+     * @param string $type Type of chart to validate.
+     * @throws \InvalidArgumentException If the type is not valid.
+     */
+    protected function validateType($type)
+    {
+        if (!in_array($type, $this->validChartTypes)) {
+            throw new \InvalidArgumentException("Invalid chart type: $type");
+        }
+    }
+
+    /**
+     * Validate the chart data.
+     *
+     * @param array $data Data for the chart to validate.
+     * @throws \InvalidArgumentException If the data is not valid.
+     */
+    protected function validateData($data)
+    {
+        if (!is_array($data) || empty($data)) {
+            throw new \InvalidArgumentException("Data must be a non-empty array");
+        }
+
+        foreach ($data as $key => $value) {
+            if (!is_string($key) || !is_numeric($value)) {
+                throw new \InvalidArgumentException("Each element of data must have a string label as key and a numeric value");
+            }
+        }
+    }
+
+
+
 }
-
-

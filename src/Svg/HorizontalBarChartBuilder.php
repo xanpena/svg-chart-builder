@@ -23,18 +23,9 @@ class HorizontalBarChartBuilder {
     private string $svg = '';
     private int $height = 300;
 
-    public function __construct()
+    public function __construct($data)
     {
-        $this->data = [
-            'matematicas' => 16,
-            'literatura'  => 18,
-            'inglés'      => 40,
-            'tecnología'  => 25,
-            'musica'      => 12,
-            'matematicas2' => 16,
-            'literatura2'  => 18,
-            'chino' => 12
-        ];
+        $this->data   = $data;
         $this->series = array_keys($this->data);
     }
 

@@ -23,18 +23,9 @@ class BarChartBuilder {
     private string $svg = '';
     private int $width = 400;
 
-    public function __construct()
+    public function __construct($data)
     {
-        $this->data = [
-            'matematicas' => 16,
-            'literatura'  => 18,
-            'inglés'      => 40,
-            'tecnología'  => 25,
-            'musica'      => 12,
-            'matematicas2' => 16,
-            'literatura2'  => 18,
-            'inglés2'      => 40
-        ];
+        $this->data = $data;
         $this->series = array_keys($this->data);
     }
 
@@ -75,7 +66,8 @@ class BarChartBuilder {
     private function makeCanvas()
     {
         $numSeries = count($this->series);
-        $widthRatio = ($this->width - 10) / $numSeries; // Ajuste de ancho
+        $availableWidth = $this->width - 100; // Espacio disponible para las series y las etiquetas
+        $widthRatio = $availableWidth / $numSeries;
         $spaceRatio = 10;
 
         $baseX = 50;
@@ -95,6 +87,12 @@ class BarChartBuilder {
 
             $this->svg .= '<rect x="'.$x.'" y="'.$y.'" width="'.$widthRatio.'" height="'.$barHeight.'" fill="'.$this->colors[$counter].'"/>';
 
+            // Añadir el valor de la barra en el medio de sí misma
+            $valueX = $x + $widthRatio / 2;
+            $valueY = $y + $barHeight / 2;
+
+            $this->svg .= '<text x="'.$valueX.'" y="'.$valueY.'" font-family="Arial" font-size="14" fill="black" text-anchor="middle" dominant-baseline="middle">'.$data.'</text>';
+
             $x += $widthRatio + $spaceRatio;
             $counter++;
         }
@@ -105,7 +103,8 @@ class BarChartBuilder {
     private function makeLabels()
     {
         $numSeries = count($this->series);
-        $widthRatio = ($this->width - 100) / $numSeries; // Ajuste de ancho
+        $availableWidth = $this->width - 100; // Espacio disponible para las series y las etiquetas
+        $widthRatio = $availableWidth / $numSeries;
         $spaceRatio = 10;
 
         $baseX = 50;
@@ -131,6 +130,7 @@ class BarChartBuilder {
 
         return $this;
     }
+
 
     private function makeSeries()
     {
