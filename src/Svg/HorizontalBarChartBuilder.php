@@ -2,7 +2,7 @@
 
 namespace Xanpena\SVGChartBuilder\Svg;
 
-class ChartBuilder {
+class HorizontalBarChartBuilder {
 
     private $colors = [
         '#2196F3',
@@ -17,11 +17,11 @@ class ChartBuilder {
         '#CDDC39',
     ];
     private array $data = [];
-    private int $height = 300;
+    private int $width = 400;
     private array $series = [];
 
     private string $svg = '';
-    private int $width = 400;
+    private int $height = 300;
 
     public function __construct()
     {
@@ -33,7 +33,7 @@ class ChartBuilder {
             'musica'      => 12,
             'matematicas2' => 16,
             'literatura2'  => 18,
-            'inglés2'      => 40
+            'chino' => 12
         ];
         $this->series = array_keys($this->data);
     }
@@ -43,6 +43,7 @@ class ChartBuilder {
         $this->openSvgTag()
             ->makeAxis()
             ->makeCanvas()
+            ->makeSeries()
             ->makeLabels()
             ->closeSvgTag();
 
@@ -51,8 +52,8 @@ class ChartBuilder {
 
     private function makeAxis()
     {
-        $this->svg .= '<line x1="50" y1="250" x2="' . ($this->width - 50) . '" y2="250" stroke="black" />';
-        $this->svg .= '<line x1="50" y1="250" x2="50" y2="50" stroke="black" />';
+        $this->svg .= '<line x1="100" y1="' . ($this->height - 20) . '" x2="100" y2="20" stroke="black"></line>';
+        $this->svg .= '<line x1="100" y1="' . ($this->height - 20) . '" x2="' . ($this->width + 20) . '" y2="' . ($this->height - 20) . '" stroke="black"></line>';
 
         return $this;
     }
@@ -74,14 +75,14 @@ class ChartBuilder {
     private function makeCanvas()
     {
         $numSeries = count($this->series);
-        $widthRatio = ($this->width - 100) / $numSeries; // Ajuste de ancho
+        $heightRatio = ($this->height - 120) / $numSeries; // Ancho de las barras
         $spaceRatio = 10;
 
-        $baseX = 50;
-        $baseY = 250;
+        $baseX = 100;
+        $baseY = $this->height - 43;
 
         $counter = 0;
-        $x = $baseX;
+        $y = $baseY;
 
         foreach ($this->data as $key => $data) {
             if ($counter >= count($this->colors)) {
@@ -89,45 +90,59 @@ class ChartBuilder {
             }
 
             $proportion = $data / max($this->data);
-            $barHeight = $proportion * ($baseY - 50);
-            $y = $baseY - $barHeight;
+            $barHeight = $proportion * ($this->width - 120); // Ajuste de altura
+            $x = $baseX;
 
-            $this->svg .= '<rect x="'.$x.'" y="'.$y.'" width="'.$widthRatio.'" height="'.$barHeight.'" fill="'.$this->colors[$counter].'"/>';
+            $this->svg .= '<rect x="'.$x.'" y="'.$y.'" width="'.$barHeight.'" height="'.$heightRatio.'" fill="'.$this->colors[$counter].'"/>';
 
-            $x += $widthRatio + $spaceRatio;
+            $y -= $heightRatio + $spaceRatio;
             $counter++;
         }
 
         return $this;
     }
 
+
     private function makeLabels()
     {
         $numSeries = count($this->series);
-        $widthRatio = ($this->width - 100) / $numSeries; // Ajuste de ancho
+        $heightRatio = ($this->height - 120) / $numSeries; // Ajuste de alto
         $spaceRatio = 10;
 
-        $baseX = 50;
-        $baseY = 250;
+        $baseX = 95;
+        $baseY = $this->height - 20;
 
-        $x = $baseX + $widthRatio / 2;
-        $y = $baseY + 30;
-
-        $rotation = -45; // Grados de inclinación
-        $verticalOffset = 10 * abs(sin(deg2rad($rotation))); // Desplazamiento vertical
-        $horizontalOffset = -($widthRatio / 4); // Desplazamiento horizontal
+        $x = $baseX - 5;
+        $y = $baseY - $heightRatio / 2;
 
         foreach ($this->series as $key => $series) {
             if ($key >= count($this->colors)) {
                 $key = 0;
             }
 
-            // Aplicamos la rotación y los desplazamientos a la etiqueta
-            $this->svg .= '<text transform="rotate('.$rotation.', '.$x.', '.$y.')" x="'.($x + $horizontalOffset).'" y="'.($y + $verticalOffset).'" font-family="Arial" font-size="14" fill="'.$this->colors[$key].'" text-anchor="middle">'.$series.'</text>';
+            $this->svg .= '<text x="'.$x.'" y="'.$y.'" font-family="Arial" font-size="14" fill="'.$this->colors[$key].'" text-anchor="end" dominant-baseline="middle">'.$series.'</text>';
 
-            $x += $widthRatio + $spaceRatio;
+            $y -= $heightRatio + $spaceRatio;
         }
 
         return $this;
     }
+
+    private function makeSeries()
+    {
+        $baseX = 95;
+        $baseY = $this->height - 20;
+        $xSpacing = ($this->width - 120) / 10;
+
+        $x = $baseX;
+        $y = $baseY + 20;
+
+        for ($i = 0; $i <= 10; $i++) {
+            $this->svg .= '<text x="'.$x.'" y="'.$y.'" font-family="Arial" font-size="12" fill="black" text-anchor="middle" dominant-baseline="text-before-edge">'.($i * 10).'</text>';
+            $x += $xSpacing;
+        }
+
+        return $this;
+    }
+
 }
