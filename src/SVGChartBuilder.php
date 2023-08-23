@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xanpena\SVGChartBuilder;
 
+use Xanpena\SVGChartBuilder\Svg\ChartBuilder;
+
 class SVGChartBuilder
 {
 
@@ -21,4 +23,11 @@ class SVGChartBuilder
     {
     }
 
+    public function create($type, $data)
+    {
+        return (new ChartBuilder($type, $data))->makeSvg();
+    }
+
 }
+
+
