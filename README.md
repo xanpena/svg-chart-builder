@@ -2,6 +2,10 @@
 
 SVGChartBuilder is a PHP library that allows you to generate SVG-based charts for use in your backend applications.
 
+### Requirements
+
+PHP 8.0 or later
+
 ## Installation
 
 You can install SVGChartBuilder via Composer:
