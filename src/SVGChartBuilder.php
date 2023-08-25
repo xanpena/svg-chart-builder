@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Xanpena\SVGChartBuilder;
 
-use Xanpena\SVGChartBuilder\Svg\{
-    BarChartBuilder,
+use Xanpena\SVGChartBuilder\Svg\{BarChartBuilder,
     DoughnutChartBuilder,
     HorizontalBarChartBuilder,
-    PieChartBuilder
-};
+    LineChartBuilder,
+    PieChartBuilder};
 
 class SVGChartBuilder
 {
@@ -17,12 +16,14 @@ class SVGChartBuilder
     const CHART_TYPE_DOUGHNUT = 'doughnut';
     const CHART_TYPE_HORIZONTALBAR = 'horizontal-bar';
     const CHART_TYPE_PIE = 'pie';
+    const CHART_TYPE_LINE = 'line';
 
     protected $validChartTypes = [
         self::CHART_TYPE_BAR,
         self::CHART_TYPE_DOUGHNUT,
         self::CHART_TYPE_HORIZONTALBAR,
         self::CHART_TYPE_PIE,
+        self::CHART_TYPE_LINE,
     ];
 
     protected $type;
@@ -38,7 +39,7 @@ class SVGChartBuilder
     public function __construct($type, $data)
     {
         $this->validateType($type);
-        $this->validateData($data);
+        $this->validateData($type, $data);
 
         $this->type = $type;
         $this->data = $data;
@@ -66,6 +67,9 @@ class SVGChartBuilder
             case self::CHART_TYPE_PIE:
                 $chart = (new PieChartBuilder($this->data))->makeSvg();
                 break;
+            case self::CHART_TYPE_LINE:
+                $chart = (new LineChartBuilder($this->data))->makeSvg();
+                break;
         }
 
         return $chart;
@@ -87,15 +91,29 @@ class SVGChartBuilder
     /**
      * Validate the chart data.
      *
+     * @param string $type Type of chart to validate.
      * @param array $data Data for the chart to validate.
      * @throws \InvalidArgumentException If the data is not valid.
      */
-    protected function validateData($data)
+    protected function validateData($type, $data)
     {
         if (!is_array($data) || empty($data)) {
             throw new \InvalidArgumentException("Data must be a non-empty array");
         }
 
+        switch ($type) {
+            case self::CHART_TYPE_LINE:
+                $this->validateDataLineGraph($data);
+                break;
+            default:
+                $this->validateDataGenericGraph($data);
+                break;
+        }
+    }
+
+
+    protected function validateDataGenericGraph($data)
+    {
         foreach ($data as $key => $value) {
             if (!is_string($key) || !is_numeric($value)) {
                 throw new \InvalidArgumentException("Each element of data must have a string label as key and a numeric value");
@@ -103,6 +121,24 @@ class SVGChartBuilder
         }
     }
 
+
+    protected function validateDataLineGraph($data)
+    {
+        $firstSecondaryKeys = null;
+
+        foreach ($data as $key => $value) {
+            if (!is_string($key) || !is_array($value)) {
+                throw new \InvalidArgumentException("Each element of data must have a string label as key and a array of data with a string labels as key and a numeric values");
+            }
+
+            $secondaryKeys = array_keys($value);
+            if ($firstSecondaryKeys === null) {
+                $firstSecondaryKeys = $secondaryKeys;
+            } else if ($firstSecondaryKeys !== $secondaryKeys) {
+                throw new \InvalidArgumentException("Secondary keys for each value in the array must be identical");
+            }
+        }
+    }
 
 
 }
