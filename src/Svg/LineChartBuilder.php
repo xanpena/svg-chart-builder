@@ -2,30 +2,18 @@
 
 namespace Xanpena\SVGChartBuilder\Svg;
 
-class LineChartBuilder {
+class LineChartBuilder extends BaseChartBuilder {
 
-    private $colors = [
-        '#2196F3',
-        '#4CAF50',
-        '#F44336',
-        '#FFC107',
-        '#FF9800',
-        '#9C27B0',
-        '#E91E63',
-        '#9E9E9E',
-        '#00BCD4',
-        '#CDDC39',
-    ];
-    private array $data = [];
-    private int $height = 500;
+    protected int $width = 400;
+    protected int $height = 500;
     private array $series = [];
 
-    private string $svg = '';
-    private int $width = 400;
-
-    public function __construct($data)
-    {
-        $this->data = $data;
+    /**
+     * Initialize properties.
+     *
+     */
+    protected function initialize($data) {
+        parent::initialize($data);
         $this->series = array_keys($this->data[(key($this->data))]);
     }
 
@@ -39,8 +27,8 @@ class LineChartBuilder {
         $this->openSvgTag()
             ->makeAxis()
             ->makeSeries()
-            ->makeLinesWithPoints()
-            ->makeLabels()
+            ->generateSvg()
+            ->drawLabels()
             ->makeCirclesWithText()
             ->closeSvgTag();
 
@@ -60,36 +48,13 @@ class LineChartBuilder {
         return $this;
     }
 
-    /**
-     * Open the SVG tag with the specified width and height.
-     *
-     * @return $this
-     */
-    private function openSvgTag()
-    {
-        $this->svg = '<svg width="'.($this->width + 20).'" height="'.($this->height + 20).'" xmlns="http://www.w3.org/2000/svg">';
-
-        return $this;
-    }
-
-    /**
-     * Close the SVG tag.
-     *
-     * @return $this
-     */
-    private function closeSvgTag()
-    {
-        $this->svg .= '</svg>';
-
-        return $this;
-    }
 
     /**
      * Generate the chart on SVG canvas.
      *
      * @return $this
      */
-    private function makeLinesWithPoints()
+    protected function generateSvg()
     {
         $maxValue = $this->getMaxValue();
         $availableWidth = $this->width - 100;
@@ -143,7 +108,7 @@ class LineChartBuilder {
      *
      * @return int $maxValue
      */
-    private function getMaxValue() {
+    protected function getMaxValue() {
         $maxValue = 0;
 
         foreach ($this->data as $labels) {
@@ -162,7 +127,7 @@ class LineChartBuilder {
      *
      * @return $this
      */
-    private function makeLabels()
+    protected function drawLabels()
     {
         $availableWidth = $this->width - 100;
 
@@ -183,7 +148,7 @@ class LineChartBuilder {
     }
 
 
-    private function makeCirclesWithText()
+    protected function makeCirclesWithText()
     {
         $labels = array_keys($this->data);
         $availableWidth = $this->width - 100;
@@ -210,7 +175,7 @@ class LineChartBuilder {
      *
      * @return $this
      */
-    private function makeSeries()
+    protected function makeSeries()
     {
         $baseX = 40;
         $baseY = 250;

@@ -2,30 +2,10 @@
 
 namespace Xanpena\SVGChartBuilder\Svg;
 
-class PieChartBuilder {
+class PieChartBuilder extends BaseChartBuilder {
 
-    private $colors = [
-        '#2196F3',
-        '#4CAF50',
-        '#F44336',
-        '#FFC107',
-        '#FF9800',
-        '#9C27B0',
-        '#E91E63',
-        '#9E9E9E',
-        '#00BCD4',
-        '#CDDC39',
-    ];
-    private array $data = [];
-    private int $width = 400;
-    private int $height = 400;
-
-    private string $svg = '';
-
-    public function __construct($data)
-    {
-        $this->data = $data;
-    }
+    protected int $width = 400;
+    protected int $height = 400;
 
     /**
      * Generate the SVG representation of the chart.
@@ -35,7 +15,7 @@ class PieChartBuilder {
     public function makeSvg()
     {
         $this->openSvgTag()
-            ->drawSlices()
+            ->generateSvg()
             ->drawLabels()
             ->closeSvgTag();
 
@@ -43,35 +23,11 @@ class PieChartBuilder {
     }
 
     /**
-     * Open the SVG tag with the specified width and height.
-     *
-     * @return $this
-     */
-    private function openSvgTag()
-    {
-        $this->svg = '<svg width="'.($this->width).'" height="'.($this->height).'" xmlns="http://www.w3.org/2000/svg">';
-
-        return $this;
-    }
-
-    /**
-     * Close the SVG tag.
-     *
-     * @return $this
-     */
-    private function closeSvgTag()
-    {
-        $this->svg .= '</svg>';
-
-        return $this;
-    }
-
-    /**
      * Draw the slices of the pie chart based on the data.
      *
      * @return $this
      */
-    private function drawSlices()
+    protected function generateSvg()
     {
         $totalValue = array_sum($this->data);
         $startAngle = 0;
@@ -114,7 +70,7 @@ class PieChartBuilder {
      *
      * @return $this
      */
-    private function drawLabels()
+    protected function drawLabels()
     {
         $totalValue = array_sum($this->data);
         $startAngle = 0;

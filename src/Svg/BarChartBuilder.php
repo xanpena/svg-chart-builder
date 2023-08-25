@@ -2,30 +2,19 @@
 
 namespace Xanpena\SVGChartBuilder\Svg;
 
-class BarChartBuilder {
+class BarChartBuilder extends BaseChartBuilder {
 
-    private $colors = [
-        '#2196F3',
-        '#4CAF50',
-        '#F44336',
-        '#FFC107',
-        '#FF9800',
-        '#9C27B0',
-        '#E91E63',
-        '#9E9E9E',
-        '#00BCD4',
-        '#CDDC39',
-    ];
-    private array $data = [];
-    private int $height = 300;
-    private array $series = [];
+    protected int $width = 400;
+    protected int $height = 300;
+    protected array $series = [];
 
-    private string $svg = '';
-    private int $width = 400;
-
-    public function __construct($data)
-    {
-        $this->data = $data;
+    /**
+     * Initialize properties.
+     *
+     * @return void
+     */
+    protected function initialize($data) {
+        parent::initialize($data);
         $this->series = array_keys($this->data);
     }
 
@@ -39,8 +28,8 @@ class BarChartBuilder {
         $this->openSvgTag()
             ->makeAxis()
             ->makeSeries()
-            ->makeCanvas()
-            ->makeLabels()
+            ->generateSvg()
+            ->drawLabels()
             ->closeSvgTag();
 
         return $this->svg;
@@ -51,34 +40,10 @@ class BarChartBuilder {
      *
      * @return $this
      */
-    private function makeAxis()
+    protected function makeAxis()
     {
         $this->svg .= '<line x1="50" y1="250" x2="' . ($this->width + 20) . '" y2="250" stroke="black" />';
         $this->svg .= '<line x1="50" y1="250" x2="50" y2="50" stroke="black" />';
-
-        return $this;
-    }
-
-    /**
-     * Open the SVG tag with the specified width and height.
-     *
-     * @return $this
-     */
-    private function openSvgTag()
-    {
-        $this->svg = '<svg width="'.($this->width + 20).'" height="'.($this->height + 20).'" xmlns="http://www.w3.org/2000/svg">';
-
-        return $this;
-    }
-
-    /**
-     * Close the SVG tag.
-     *
-     * @return $this
-     */
-    private function closeSvgTag()
-    {
-        $this->svg .= '</svg>';
 
         return $this;
     }
@@ -88,7 +53,7 @@ class BarChartBuilder {
      *
      * @return $this
      */
-    private function makeCanvas()
+    protected function generateSvg()
     {
         $numSeries = count($this->series);
         $availableWidth = $this->width - 100;
@@ -101,7 +66,7 @@ class BarChartBuilder {
         $counter = 0;
         $x = $baseX;
 
-        foreach ($this->data as $key => $data) {
+        foreach ($this->data as $data) {
             if ($counter >= count($this->colors)) {
                 $counter = 0;
             }
@@ -129,7 +94,7 @@ class BarChartBuilder {
      *
      * @return $this
      */
-    private function makeLabels()
+    protected function drawLabels()
     {
         $numSeries = count($this->series);
         $availableWidth = $this->width - 100;
@@ -164,7 +129,7 @@ class BarChartBuilder {
      *
      * @return $this
      */
-    private function makeSeries()
+    protected function makeSeries()
     {
         $baseX = 40;
         $baseY = 250;

@@ -2,30 +2,19 @@
 
 namespace Xanpena\SVGChartBuilder\Svg;
 
-class HorizontalBarChartBuilder {
+class HorizontalBarChartBuilder extends BaseChartBuilder {
 
-    private $colors = [
-        '#2196F3',
-        '#4CAF50',
-        '#F44336',
-        '#FFC107',
-        '#FF9800',
-        '#9C27B0',
-        '#E91E63',
-        '#9E9E9E',
-        '#00BCD4',
-        '#CDDC39',
-    ];
-    private array $data = [];
-    private int $width = 400;
-    private array $series = [];
+    protected int $width = 400;
+    protected int $height = 300;
+    protected array $series = [];
 
-    private string $svg = '';
-    private int $height = 300;
-
-    public function __construct($data)
-    {
-        $this->data   = $data;
+    /**
+     * Initialize properties.
+     *
+     * @return void
+     */
+    protected function initialize($data) {
+        parent::initialize($data);
         $this->series = array_keys($this->data);
     }
 
@@ -38,9 +27,9 @@ class HorizontalBarChartBuilder {
     {
         $this->openSvgTag()
             ->makeAxis()
-            ->makeCanvas()
+            ->generateSvg()
             ->makeSeries()
-            ->makeLabels()
+            ->drawLabels()
             ->closeSvgTag();
 
         return $this->svg;
@@ -59,36 +48,13 @@ class HorizontalBarChartBuilder {
         return $this;
     }
 
-    /**
-     * Open the SVG tag with the specified width and height.
-     *
-     * @return $this
-     */
-    private function openSvgTag()
-    {
-        $this->svg = '<svg width="'.($this->width + 20).'" height="'.($this->height + 20).'" xmlns="http://www.w3.org/2000/svg">';
-
-        return $this;
-    }
-
-    /**
-     * Close the SVG tag.
-     *
-     * @return $this
-     */
-    private function closeSvgTag()
-    {
-        $this->svg .= '</svg>';
-
-        return $this;
-    }
 
     /**
      * Generate the chart on SVG canvas.
      *
      * @return $this
      */
-    private function makeCanvas()
+    protected function generateSvg()
     {
         $numSeries = count($this->series);
         $heightRatio = ($this->height - 120) / $numSeries;
@@ -123,7 +89,7 @@ class HorizontalBarChartBuilder {
      *
      * @return $this
      */
-    private function makeLabels()
+    protected function drawLabels()
     {
         $numSeries = count($this->series);
         $heightRatio = ($this->height - 120) / $numSeries;
@@ -153,7 +119,7 @@ class HorizontalBarChartBuilder {
      *
      * @return $this
      */
-    private function makeSeries()
+    protected function makeSeries()
     {
         $baseX = 95;
         $baseY = $this->height - 20;
