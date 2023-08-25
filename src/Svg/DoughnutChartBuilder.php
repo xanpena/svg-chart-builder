@@ -63,6 +63,12 @@ class DoughnutChartBuilder extends BaseChartBuilder {
             $counter++;
         }
 
+        $centerX = $this->width / 2;
+        $centerY = $this->height / 2;
+        $circleRadius = $this->innerRadius * 0.8;
+
+        $this->svg .= '<circle cx="'.$centerX.'" cy="'.$centerY.'" r="'.$circleRadius.'" fill="white"/>';
+
         return $this;
     }
 
@@ -89,7 +95,7 @@ class DoughnutChartBuilder extends BaseChartBuilder {
             $labelX = $this->width / 2 + cos(deg2rad($midAngle)) * ($this->innerRadius + ($this->width / 4)) * 0.8;
             $labelY = $this->height / 2 + sin(deg2rad($midAngle)) * ($this->innerRadius + ($this->height / 4)) * 0.8;
 
-            $this->svg .= '<text x="'.$labelX.'" y="'.$labelY.'" font-family="Arial" font-size="14" fill="black" text-anchor="middle" dominant-baseline="middle">'.$key.' ('.$value.')</text>';
+            $this->svg .= '<text x="'.$labelX.'" y="'.$labelY.'" font-family="Arial" font-size="14" fill="'. $this->labelsColor .'" text-anchor="middle" dominant-baseline="middle">'.$key.' ('.$value.')</text>';
 
             $startAngle = $endAngle;
         }

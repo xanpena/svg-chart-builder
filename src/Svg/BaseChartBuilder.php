@@ -2,6 +2,8 @@
 
 namespace Xanpena\SVGChartBuilder\Svg;
 
+use Xanpena\SVGChartBuilder\SVGChartBuilder;
+
 abstract class BaseChartBuilder {
 
     protected array $colors = [
@@ -21,10 +23,14 @@ abstract class BaseChartBuilder {
     protected array $data = [];
     protected int $width;
     protected int $height;
+    protected string $labelsColor = '#000000';
 
 
-    public function __construct($data)
+    public function __construct($data, $options)
     {
+        $this->data = $data;
+        $this->configureOptions($options);
+
         $this->initialize($data);
     }
 
@@ -56,7 +62,7 @@ abstract class BaseChartBuilder {
      * @return void
      */
     protected function initialize($data) {
-        $this->data = $data;
+        // Method to be overridden if necessary
     }
 
 
@@ -82,6 +88,15 @@ abstract class BaseChartBuilder {
         $this->svg .= '</svg>';
 
         return $this;
+    }
+
+    protected function configureOptions($options)
+    {
+        foreach ($options as $option => $values) {
+            if (in_array($option, SVGChartBuilder::OPTION_TYPES) && property_exists($this, $option)) {
+                $this->{$option} = $options[$option];
+            }
+        }
     }
 
 }

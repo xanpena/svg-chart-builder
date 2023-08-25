@@ -24,6 +24,7 @@ SVGChartBuilder provides several types of charts that you can create:
 
 To create a bar chart, use the following code:
 
+- Tipo Bar chart
 ```php
 use Xanpena\SVGChartBuilder\SVGChartBuilder;
 
@@ -33,7 +34,148 @@ $data = [
     'english' => 40,
     // ... other data ...
 ];
-$chartBuilder = new SVGChartBuilder(SVGChartBuilder::CHART_TYPE_BAR, $data);
+
+$options = [
+    'colors' => [
+        '#CDDC39',
+        '#00BCD4',
+        '#9E9E9E',
+        // ... other data ...
+    ],
+    'axisColors' => [
+        'x' => 'red',
+        'y' => 'blue'
+    ],
+    'labelsColor' => 'orange',
+    'dataColor' => 'white',
+];
+
+$chartBuilder = new SVGChartBuilder(SVGChartBuilder::CHART_TYPE_BAR, $data, $options);
+$svg = $chartBuilder->create();
+echo $svg;
+```
+
+- Tipo Horizontal bar chart
+```php
+use Xanpena\SVGChartBuilder\SVGChartBuilder;
+
+$data = [
+    'math' => 16,
+    'literature' => 18,
+    'english' => 40,
+    // ... other data ...
+];
+
+$options = [
+    'colors' => [
+        '#CDDC39',
+        '#00BCD4',
+        '#9E9E9E',
+        // ... other data ...
+    ],
+    'axisColors' => [
+        'x' => 'red',
+        'y' => 'blue'
+    ],
+    'labelsColor' => 'orange',
+    'dataColor' => 'white',
+];
+
+$chartBuilder = new SVGChartBuilder(SVGChartBuilder::CHART_TYPE_HORIZONTALBAR, $data, $options);
+$svg = $chartBuilder->create();
+echo $svg;
+```
+
+- Tipo Doughnut chart
+```php
+use Xanpena\SVGChartBuilder\SVGChartBuilder;
+
+$data = [
+    'math' => 16,
+    'literature' => 18,
+    'english' => 40,
+    // ... other data ...
+];
+
+$options = [
+    'colors' => [
+        '#CDDC39',
+        '#00BCD4',
+        '#9E9E9E',
+        // ... other data ...
+    ],
+    'labelsColor' => 'white'
+];
+
+$chartBuilder = new SVGChartBuilder(SVGChartBuilder::CHART_TYPE_DOUGHNUT, $data, $options);
+$svg = $chartBuilder->create();
+echo $svg;
+```
+
+- Tipo Pie chart
+```php
+use Xanpena\SVGChartBuilder\SVGChartBuilder;
+
+$data = [
+    'math' => 16,
+    'literature' => 18,
+    'english' => 40,
+    // ... other data ...
+];
+
+$options = [
+    'colors' => [
+        '#CDDC39',
+        '#00BCD4',
+        '#9E9E9E',
+        // ... other data ...
+    ],
+    'labelsColor' => 'white'
+];
+
+$chartBuilder = new SVGChartBuilder(SVGChartBuilder::CHART_TYPE_PIE, $data, $options);
+$svg = $chartBuilder->create();
+echo $svg;
+```
+
+- Tipo Line chart
+```php
+use Xanpena\SVGChartBuilder\SVGChartBuilder;
+
+$data = [
+    'math' => [
+        '2020/2021' => 11,
+        '2021/2022' => 17,
+        '2023/2024' => 15,
+    ],
+    'literature' => [
+        '2020/2021' => 21,
+        '2021/2022' => 21,
+        '2023/2024' => 23,
+    ],
+    'english' => [
+        '2020/2021' => 14,
+        '2021/2022' => 9,
+        '2023/2024' => 18,
+    ]
+    // ... other data ...
+];
+
+$options = [
+    'colors' => [
+        '#CDDC39',
+        '#00BCD4',
+        '#9E9E9E',
+        // ... other data ...
+    ],
+    'axisColors' => [
+        'x' => 'red',
+        'y' => 'blue'
+    ],
+    'labelsColor' => 'orange',
+];
+
+$chartBuilder = new SVGChartBuilder(SVGChartBuilder::CHART_TYPE_LINE, $data, $options);
 $svg = $chartBuilder->create();
 echo $svg;
 ```
@@ -42,9 +184,10 @@ echo $svg;
 SVGChartBuilder supports the following chart types:
 
 SVGChartBuilder::BAR_CHART: Bar chart<br>
-SVGChartBuilder::DOUGHNUT_CHART: Doughnut chart<br>
 SVGChartBuilder::HORIZONTALBAR_CHART: Horizontal bar chart<br>
+SVGChartBuilder::DOUGHNUT_CHART: Doughnut chart<br>
 SVGChartBuilder::PIE_CHART: Pie chart<br>
+SVGChartBuilder::CHART_TYPE_LINE: Line chart<br>
 
 
 ## Changelog

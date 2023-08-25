@@ -7,6 +7,8 @@ class BarChartBuilder extends BaseChartBuilder {
     protected int $width = 400;
     protected int $height = 300;
     protected array $series = [];
+    protected array $axisColors = [];
+    protected string $dataColor = '#000000';
 
     /**
      * Initialize properties.
@@ -14,7 +16,6 @@ class BarChartBuilder extends BaseChartBuilder {
      * @return void
      */
     protected function initialize($data) {
-        parent::initialize($data);
         $this->series = array_keys($this->data);
     }
 
@@ -42,8 +43,8 @@ class BarChartBuilder extends BaseChartBuilder {
      */
     protected function drawAxis()
     {
-        $this->svg .= '<line x1="50" y1="250" x2="' . ($this->width + 20) . '" y2="250" stroke="black" />';
-        $this->svg .= '<line x1="50" y1="250" x2="50" y2="50" stroke="black" />';
+        $this->svg .= '<line x1="50" y1="250" x2="' . ($this->width + 20) . '" y2="250" stroke="'. $this->getAxisColor('x') .'" />';
+        $this->svg .= '<line x1="50" y1="250" x2="50" y2="50" stroke="'. $this->getAxisColor('y') .'" />';
 
         return $this;
     }
@@ -80,7 +81,7 @@ class BarChartBuilder extends BaseChartBuilder {
             $valueX = $x + $widthRatio / 2;
             $valueY = $y + $barHeight / 2;
 
-            $this->svg .= '<text x="'.$valueX.'" y="'.$valueY.'" font-family="Arial" font-size="14" fill="black" text-anchor="middle" dominant-baseline="middle">'.$data.'</text>';
+            $this->svg .= '<text x="'.$valueX.'" y="'.$valueY.'" font-family="Arial" font-size="14" fill="'. $this->dataColor .'" text-anchor="middle" dominant-baseline="middle">'.$data.'</text>';
 
             $x += $widthRatio + $spaceRatio;
             $counter++;
@@ -139,11 +140,20 @@ class BarChartBuilder extends BaseChartBuilder {
         $y = $baseY;
 
         for ($i = 0; $i <= 10; $i++) {
-            $this->svg .= '<text x="'.$x.'" y="'.$y.'" font-family="Arial" font-size="12" fill="black" text-anchor="end">'.($i * 10).'</text>';
+            $this->svg .= '<text x="'.$x.'" y="'.$y.'" font-family="Arial" font-size="12" fill="'. $this->labelsColor .'" text-anchor="end">'.($i * 10).'</text>';
             $y -= $ySpacing;
         }
 
         return $this;
+    }
+
+    protected function getAxisColor($axis)
+    {
+        if (empty($this->axisColors) === false && array_key_exists($axis, $this->axisColors)) {
+            return $this->axisColors[$axis];
+        }
+
+        return '#000000';
     }
 
 }
