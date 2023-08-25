@@ -26,9 +26,9 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
     public function makeSvg()
     {
         $this->openSvgTag()
-            ->makeAxis()
-            ->generateSvg()
-            ->makeSeries()
+            ->drawAxis()
+            ->drawGraphData()
+            ->drawSeries()
             ->drawLabels()
             ->closeSvgTag();
 
@@ -40,7 +40,7 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
      *
      * @return $this
      */
-    private function makeAxis()
+    private function drawAxis()
     {
         $this->svg .= '<line x1="100" y1="' . ($this->height - 20) . '" x2="100" y2="20" stroke="black"></line>';
         $this->svg .= '<line x1="100" y1="' . ($this->height - 20) . '" x2="' . ($this->width + 20) . '" y2="' . ($this->height - 20) . '" stroke="black"></line>';
@@ -54,17 +54,19 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
      *
      * @return $this
      */
-    protected function generateSvg()
+    protected function drawGraphData()
     {
         $numSeries = count($this->series);
-        $heightRatio = ($this->height - 120) / $numSeries;
-        $spaceRatio = 10;
+        $availableVerticalSpace = $this->height - 40;
+
+        $totalSpace = $availableVerticalSpace - ($numSeries * 10);
+        $heightRatio = $totalSpace / $numSeries;
 
         $baseX = 100;
-        $baseY = $this->height - 43;
+        $baseY = $this->height - 20;
 
         $counter = 0;
-        $y = $baseY;
+        $y = $baseY - $heightRatio;
 
         foreach ($this->data as $key => $data) {
             if ($counter >= count($this->colors)) {
@@ -77,7 +79,11 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
 
             $this->svg .= '<rect x="'.$x.'" y="'.$y.'" width="'.$barHeight.'" height="'.$heightRatio.'" fill="'.$this->colors[$counter].'"/>';
 
-            $y -= $heightRatio + $spaceRatio;
+            $textX = $x + $barHeight / 2;
+            $textY = $y + $heightRatio / 2;
+            $this->svg .= '<text x="'.$textX.'" y="'.$textY.'" font-family="Arial" font-size="12" fill="black" text-anchor="middle" dominant-baseline="middle">'.$data.'</text>';
+
+            $y -= $heightRatio + 10;
             $counter++;
         }
 
@@ -92,8 +98,10 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
     protected function drawLabels()
     {
         $numSeries = count($this->series);
-        $heightRatio = ($this->height - 120) / $numSeries;
-        $spaceRatio = 10;
+        $availableVerticalSpace = $this->height - 40;
+
+        $totalSpace = $availableVerticalSpace - ($numSeries * 10);
+        $heightRatio = $totalSpace / $numSeries + 1;
 
         $baseX = 95;
         $baseY = $this->height - 20;
@@ -108,7 +116,7 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
 
             $this->svg .= '<text x="'.$x.'" y="'.$y.'" font-family="Arial" font-size="14" fill="'.$this->colors[$key].'" text-anchor="end" dominant-baseline="middle">'.$series.'</text>';
 
-            $y -= $heightRatio + $spaceRatio;
+            $y -= $heightRatio + 10;
         }
 
         return $this;
@@ -119,7 +127,7 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
      *
      * @return $this
      */
-    protected function makeSeries()
+    protected function drawSeries()
     {
         $baseX = 95;
         $baseY = $this->height - 20;

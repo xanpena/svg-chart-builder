@@ -15,7 +15,7 @@ class PieChartBuilder extends BaseChartBuilder {
     public function makeSvg()
     {
         $this->openSvgTag()
-            ->generateSvg()
+            ->drawGraphData()
             ->drawLabels()
             ->closeSvgTag();
 
@@ -27,7 +27,7 @@ class PieChartBuilder extends BaseChartBuilder {
      *
      * @return $this
      */
-    protected function generateSvg()
+    protected function drawGraphData()
     {
         $totalValue = array_sum($this->data);
         $startAngle = 0;

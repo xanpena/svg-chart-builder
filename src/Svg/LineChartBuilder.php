@@ -25,11 +25,11 @@ class LineChartBuilder extends BaseChartBuilder {
     public function makeSvg()
     {
         $this->openSvgTag()
-            ->makeAxis()
-            ->makeSeries()
-            ->generateSvg()
+            ->drawAxis()
+            ->drawSeries()
+            ->drawGraphData()
             ->drawLabels()
-            ->makeCirclesWithText()
+            ->drawCirclesWithText()
             ->closeSvgTag();
 
         return $this->svg;
@@ -40,7 +40,7 @@ class LineChartBuilder extends BaseChartBuilder {
      *
      * @return $this
      */
-    private function makeAxis()
+    private function drawAxis()
     {
         $this->svg .= '<line x1="50" y1="250" x2="' . ($this->width + 20) . '" y2="250" stroke="black" />';
         $this->svg .= '<line x1="50" y1="250" x2="50" y2="50" stroke="black" />';
@@ -54,7 +54,7 @@ class LineChartBuilder extends BaseChartBuilder {
      *
      * @return $this
      */
-    protected function generateSvg()
+    protected function drawGraphData()
     {
         $maxValue = $this->getMaxValue();
         $availableWidth = $this->width - 100;
@@ -148,7 +148,7 @@ class LineChartBuilder extends BaseChartBuilder {
     }
 
 
-    protected function makeCirclesWithText()
+    protected function drawCirclesWithText()
     {
         $labels = array_keys($this->data);
         $availableWidth = $this->width - 100;
@@ -175,7 +175,7 @@ class LineChartBuilder extends BaseChartBuilder {
      *
      * @return $this
      */
-    protected function makeSeries()
+    protected function drawSeries()
     {
         $baseX = 40;
         $baseY = 250;

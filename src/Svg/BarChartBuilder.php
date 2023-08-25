@@ -26,9 +26,9 @@ class BarChartBuilder extends BaseChartBuilder {
     public function makeSvg()
     {
         $this->openSvgTag()
-            ->makeAxis()
-            ->makeSeries()
-            ->generateSvg()
+            ->drawAxis()
+            ->drawSeries()
+            ->drawGraphData()
             ->drawLabels()
             ->closeSvgTag();
 
@@ -40,7 +40,7 @@ class BarChartBuilder extends BaseChartBuilder {
      *
      * @return $this
      */
-    protected function makeAxis()
+    protected function drawAxis()
     {
         $this->svg .= '<line x1="50" y1="250" x2="' . ($this->width + 20) . '" y2="250" stroke="black" />';
         $this->svg .= '<line x1="50" y1="250" x2="50" y2="50" stroke="black" />';
@@ -53,7 +53,7 @@ class BarChartBuilder extends BaseChartBuilder {
      *
      * @return $this
      */
-    protected function generateSvg()
+    protected function drawGraphData()
     {
         $numSeries = count($this->series);
         $availableWidth = $this->width - 100;
@@ -129,7 +129,7 @@ class BarChartBuilder extends BaseChartBuilder {
      *
      * @return $this
      */
-    protected function makeSeries()
+    protected function drawSeries()
     {
         $baseX = 40;
         $baseY = 250;

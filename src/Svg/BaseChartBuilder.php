@@ -40,7 +40,7 @@ abstract class BaseChartBuilder {
      *
      * @return $this
      */
-    abstract protected function generateSvg();
+    abstract protected function drawGraphData();
 
     /**
      * Generate the labels of the chart.
