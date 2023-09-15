@@ -177,19 +177,45 @@ class LineChartBuilder extends BaseChartBuilder {
      */
     protected function drawSeries()
     {
+        $numTicks = $this->calculateNumTicks();
+        $maxValue = $this->getMaxValue();
+        $interval = $maxValue / ($numTicks - 1);
+
         $baseX = 40;
         $baseY = 250;
-        $ySpacing = ($baseY - 50) / 10;
 
         $x = $baseX - 10;
-        $y = $baseY;
 
-        for ($i = 0; $i <= 10; $i++) {
-            $this->svg .= '<text x="'.$x.'" y="'.$y.'" font-family="Arial" font-size="12" fill="'. $this->labelsColor .'" text-anchor="end">'.($i * 10).'</text>';
-            $y -= $ySpacing;
+        for ($i = 0; $i < $numTicks; $i++) {
+            $tickValue = $i * $interval;
+
+            if ($tickValue != (int) $tickValue) {
+                $tickValue = round($tickValue, 2);
+            }
+
+            $barHeight = ($tickValue / $maxValue) * ($baseY - 50);
+            $y = $baseY - $barHeight;
+
+            $this->svg .= '<line x1="'.$baseX.'" y1="'.$y.'" x2="'.($baseX + 10.5).'" y2="'.$y.'" stroke="'. $this->labelsColor .'" stroke-width="0.5" />';
+
+            $labelY = $y + 5;
+            $this->svg .= '<text x="'.$x.'" y="'.$labelY.'" font-family="Arial" font-size="12" fill="'. $this->labelsColor .'" text-anchor="end">'.$tickValue.'</text>';
         }
 
         return $this;
+    }
+
+    protected function calculateNumTicks()
+    {
+        $maxValue = $this->getMaxValue();
+        $minValue = 0;
+        $range = $maxValue - $minValue;
+        $minInterval = 1;
+
+        $numTicks = max(2, ceil($range / $minInterval) + 1);
+        $numTicks = min($numTicks, 11);
+
+        return $numTicks;
     }
 
     protected function getAxisColor($axis)

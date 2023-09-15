@@ -130,19 +130,45 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
      */
     protected function drawSeries()
     {
-        $baseX = 95;
-        $baseY = $this->height - 20;
-        $xSpacing = ($this->width - 120) / 10;
+        $numTicks = $this->calculateNumTicks();
+        $maxValue = max($this->data);
+        $interval = $maxValue / ($numTicks - 1);
 
-        $x = $baseX;
+        $baseX = 100;
+        $baseY = $this->height - 20;
+
         $y = $baseY + 20;
 
-        for ($i = 0; $i <= 10; $i++) {
-            $this->svg .= '<text x="'.$x.'" y="'.$y.'" font-family="Arial" font-size="12" fill="'. $this->labelsColor .'" text-anchor="middle" dominant-baseline="text-before-edge">'.($i * 10).'</text>';
-            $x += $xSpacing;
+        for ($i = 0; $i < $numTicks; $i++) {
+            $tickValue = $i * $interval;
+
+            if ($tickValue != (int) $tickValue) {
+                $tickValue = round($tickValue, 2);
+            }
+
+            $barWidth = ($tickValue / $maxValue) * ($this->width - 120);
+            $x = $baseX + $barWidth;
+
+            $this->svg .= '<line x1="'.$x.'" y1="'.$baseY.'" x2="'.$x.'" y2="'.($baseY + 10.5).'" stroke="'. $this->labelsColor .'" stroke-width="0.5" />';
+
+            $labelX = $x;
+            $this->svg .= '<text x="'.$labelX.'" y="'.$y.'" font-family="Arial" font-size="12" fill="'. $this->labelsColor .'" text-anchor="middle" dominant-baseline="text-before-edge" transform="rotate(-45, '.$x.', '.$y.')">'.$tickValue.'</text>';
         }
 
         return $this;
+    }
+
+    protected function calculateNumTicks()
+    {
+        $maxValue = max($this->data);
+        $minValue = 0;
+        $range = $maxValue - $minValue;
+        $minInterval = 1;
+
+        $numTicks = max(2, ceil($range / $minInterval) + 1);
+        $numTicks = min($numTicks, 11);
+
+        return $numTicks;
     }
 
     protected function getAxisColor($axis)
