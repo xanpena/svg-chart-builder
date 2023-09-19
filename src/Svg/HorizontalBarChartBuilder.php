@@ -102,20 +102,18 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
         $availableVerticalSpace = $this->height - 40;
 
         $totalSpace = $availableVerticalSpace - ($numSeries * 10);
-        $heightRatio = $totalSpace / $numSeries + 1;
+        $heightRatio = $totalSpace / $numSeries;
 
         $baseX = 95;
         $baseY = $this->height - 20;
 
-        $x = $baseX - 5;
-        $y = $baseY - $heightRatio / 2;
+        $x = $baseX;
+        $y = $baseY - $heightRatio;
 
         foreach ($this->series as $key => $series) {
-            if ($key >= count($this->colors)) {
-                $key = 0;
-            }
+            $textY = $y + $heightRatio / 2;
 
-            $this->svg .= '<text x="'.$x.'" y="'.$y.'" font-family="Arial" font-size="14" fill="'.$this->colors[$key].'" text-anchor="end" dominant-baseline="middle">'.$series.'</text>';
+            $this->svg .= '<text x="'.$x.'" y="'.$textY.'" font-family="Arial" font-size="14" fill="'.$this->colors[$key].'" text-anchor="end" dominant-baseline="middle">'.$series.'</text>';
 
             $y -= $heightRatio + 10;
         }
