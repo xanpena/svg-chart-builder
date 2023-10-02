@@ -33,7 +33,7 @@ class PieChartBuilder extends BaseChartBuilder {
         $startAngle = 0;
         $counter = 0;
 
-        foreach ($this->data as $key => $value) {
+        foreach ($this->data as $value) {
             if ($value <= 0) {
                 continue;
             }
@@ -75,9 +75,14 @@ class PieChartBuilder extends BaseChartBuilder {
         $totalValue = array_sum($this->data);
         $startAngle = 0;
 
-        foreach ($this->data as $key => $value) {
+        foreach ($this->data as $index => $value) {
             if ($value <= 0) {
                 continue;
+            }
+
+            $label = $value;
+            if (array_key_exists($index, $this->labels)) {
+                $label = $this->labels[$index] . ' ('.$value.')';
             }
 
             $proportion = $value / $totalValue;
@@ -88,7 +93,7 @@ class PieChartBuilder extends BaseChartBuilder {
             $labelX = $this->width / 2 + cos(deg2rad($midAngle)) * ($this->width / 4);
             $labelY = $this->height / 2 + sin(deg2rad($midAngle)) * ($this->height / 4);
 
-            $this->svg .= '<text x="'.$labelX.'" y="'.$labelY.'" font-family="Arial" font-size="14" fill="'. $this->labelsColor .'" text-anchor="middle" dominant-baseline="middle">'.$key.' ('.$value.')</text>';
+            $this->svg .= '<text x="'.$labelX.'" y="'.$labelY.'" font-family="Arial" font-size="14" fill="'. $this->labelsColor .'" text-anchor="middle" dominant-baseline="middle">'.$label.'</text>';
 
             $startAngle = $endAngle;
         }

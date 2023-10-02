@@ -6,18 +6,8 @@ class BarChartBuilder extends BaseChartBuilder {
 
     protected int $width = 400;
     protected int $height = 300;
-    protected array $series = [];
     protected array $axisColors = [];
     protected string $dataColor = '#000000';
-
-    /**
-     * Initialize properties.
-     *
-     * @return void
-     */
-    protected function initialize($data) {
-        $this->series = array_keys($this->data);
-    }
 
     /**
      * Generate the SVG representation of the chart.
@@ -27,10 +17,10 @@ class BarChartBuilder extends BaseChartBuilder {
     public function makeSvg()
     {
         $this->openSvgTag()
-            ->drawAxis()
             ->drawSeries()
             ->drawGraphData()
             ->drawLabels()
+            ->drawAxis()
             ->closeSvgTag();
 
         return $this->svg;
@@ -56,9 +46,9 @@ class BarChartBuilder extends BaseChartBuilder {
      */
     protected function drawGraphData()
     {
-        $numSeries = count($this->series);
+        $numData = count($this->data);
         $availableWidth = $this->width - 100;
-        $widthRatio = $availableWidth / $numSeries;
+        $widthRatio = $availableWidth / $numData;
         $spaceRatio = 10;
 
         $baseX = 50;
@@ -97,9 +87,9 @@ class BarChartBuilder extends BaseChartBuilder {
      */
     protected function drawLabels()
     {
-        $numSeries = count($this->series);
+        $numData = count($this->data);
         $availableWidth = $this->width - 100;
-        $widthRatio = $availableWidth / $numSeries;
+        $widthRatio = $availableWidth / $numData;
         $spaceRatio = 10;
 
         $baseX = 50;
@@ -112,12 +102,12 @@ class BarChartBuilder extends BaseChartBuilder {
         $verticalOffset = 10 * abs(sin(deg2rad($rotation)));
         $horizontalOffset = -($widthRatio / 4);
 
-        foreach ($this->series as $key => $series) {
+        foreach ($this->labels as $key => $label) {
             if ($key >= count($this->colors)) {
                 $key = 0;
             }
 
-            $this->svg .= '<text transform="rotate('.$rotation.', '.$x.', '.$y.')" x="'.($x + $horizontalOffset).'" y="'.($y + $verticalOffset).'" font-family="Arial" font-size="14" fill="'.$this->colors[$key].'" text-anchor="middle">'.$series.'</text>';
+            $this->svg .= '<text transform="rotate('.$rotation.', '.$x.', '.$y.')" x="'.($x + $horizontalOffset).'" y="'.($y + $verticalOffset).'" font-family="Arial" font-size="14" fill="'.$this->colors[$key].'" text-anchor="middle">'.$label.'</text>';
 
             $x += $widthRatio + $spaceRatio;
         }
@@ -151,7 +141,7 @@ class BarChartBuilder extends BaseChartBuilder {
             $barHeight = ($tickValue / $maxValue) * ($baseY - 50);
             $y = $baseY - $barHeight;
 
-            $this->svg .= '<line x1="'.$baseX.'" y1="'.$y.'" x2="'.($baseX + 10.5).'" y2="'.$y.'" stroke="'. $this->labelsColor .'" stroke-width="0.5" />';
+            $this->svg .= '<line x1="'.$baseX.'" y1="'.$y.'" x2="'.($baseX + 10.5).'" y2="'.$y.'" stroke="'. $this->getAxisColor('y') .'" stroke-width="0.5" />';
 
             $labelY = $y + 5;
             $this->svg .= '<text x="'.$x.'" y="'.$labelY.'" font-family="Arial" font-size="12" fill="'. $this->labelsColor .'" text-anchor="end">'.$tickValue.'</text>';

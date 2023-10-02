@@ -12,12 +12,14 @@ use Xanpena\SVGChartBuilder\Svg\{BarChartBuilder,
 
 class SVGChartBuilder
 {
+    const OPTION_LABELS = 'labels';
     const OPTION_COLORS = 'colors';
     const OPTION_AXIS_COLORS = 'axisColors';
     const OPTION_LABELS_COLOR = 'labelsColor';
     const OPTION_DATA_COLOR = 'dataColor';
 
     const OPTION_TYPES = [
+        self::OPTION_LABELS,
         self::OPTION_COLORS,
         self::OPTION_AXIS_COLORS,
         self::OPTION_LABELS_COLOR,
@@ -53,7 +55,7 @@ class SVGChartBuilder
     {
         $this->validateType($type);
         $this->validateData($type, $data);
-        $this->validateOptions($data, $options);
+        $this->validateOptions($type, $data, $options);
 
         $this->type = $type;
         $this->data = $data;
@@ -129,9 +131,9 @@ class SVGChartBuilder
 
     protected function validateDataGenericGraph($data)
     {
-        foreach ($data as $key => $value) {
-            if (!is_string($key) || !is_numeric($value)) {
-                throw new \InvalidArgumentException("Each element of data must have a string label as key and a numeric value");
+        foreach ($data as $value) {
+            if (!is_numeric($value)) {
+                throw new \InvalidArgumentException("Each element of data must have a numeric value");
             }
         }
     }
@@ -139,24 +141,36 @@ class SVGChartBuilder
 
     protected function validateDataLineGraph($data)
     {
-        $firstSecondaryKeys = null;
+        $firstNumElements = null;
 
-        foreach ($data as $key => $value) {
-            if (!is_string($key) || !is_array($value)) {
-                throw new \InvalidArgumentException("Each element of data must have a string label as key and a array of data with a string labels as key and a numeric values");
+        foreach ($data as $values) {
+            if (!is_array($values)) {
+                throw new \InvalidArgumentException("Each element of data must have an array of numerical values.");
             }
 
-            $secondaryKeys = array_keys($value);
-            if ($firstSecondaryKeys === null) {
-                $firstSecondaryKeys = $secondaryKeys;
-            } else if ($firstSecondaryKeys !== $secondaryKeys) {
-                throw new \InvalidArgumentException("Secondary keys for each value in the array must be identical");
+            $secondNumElements = count($values);
+            if ($firstNumElements === null) {
+                $firstNumElements = $secondNumElements;
+            } else if ($firstNumElements !== $secondNumElements) {
+                throw new \InvalidArgumentException("Each element of data must have the same number of elements.");
+            }
+
+            foreach ($values as $value) {
+                if (!is_numeric($value)) {
+                    throw new \InvalidArgumentException("Each element of data must have an array of numerical values.");
+                }
             }
         }
     }
 
-    protected function validateOptions($data, $options)
+    protected function validateOptions($type, $data, $options)
     {
+        switch ($type) {
+            case self::CHART_TYPE_LINE:
+                $data = array_values($data)[0];
+                break;
+        }
+
         if (empty($options) === false) {
             if (!is_array($options)) {
                 throw new \InvalidArgumentException("Options must be a array");
@@ -164,6 +178,11 @@ class SVGChartBuilder
 
             foreach ($options as $option => $values) {
                 switch ($option) {
+                    case self::OPTION_LABELS:
+                        if (count($data) !== count($values)) {
+                            throw new \InvalidArgumentException("The $option option must have the same number of data elements");
+                        }
+                        break;
                     case self::OPTION_COLORS:
                         if (count($data) !== count($values)) {
                             throw new \InvalidArgumentException("The $option option must have the same number of data elements");

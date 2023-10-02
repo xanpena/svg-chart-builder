@@ -23,6 +23,7 @@ abstract class BaseChartBuilder {
     protected array $data = [];
     protected int $width;
     protected int $height;
+    protected array $labels = [];
     protected string $labelsColor = '#000000';
 
 

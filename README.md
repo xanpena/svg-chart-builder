@@ -29,13 +29,19 @@ To create a bar chart, use the following code:
 use Xanpena\SVGChartBuilder\SVGChartBuilder;
 
 $data = [
-    'math' => 16,
-    'literature' => 18,
-    'english' => 40,
+    16,
+    18,
+    40,
     // ... other data ...
 ];
 
 $options = [
+    'labels' => [
+        'math',
+        'literature',
+        'english',
+        // ... other data ...
+    ],
     'colors' => [
         '#CDDC39',
         '#00BCD4',
@@ -60,13 +66,19 @@ echo $svg;
 use Xanpena\SVGChartBuilder\SVGChartBuilder;
 
 $data = [
-    'math' => 16,
-    'literature' => 18,
-    'english' => 40,
+    16,
+    18,
+    40,
     // ... other data ...
 ];
 
 $options = [
+    'labels' => [
+        'math',
+        'literature',
+        'english',
+        // ... other data ...
+    ],
     'colors' => [
         '#CDDC39',
         '#00BCD4',
@@ -91,13 +103,19 @@ echo $svg;
 use Xanpena\SVGChartBuilder\SVGChartBuilder;
 
 $data = [
-    'math' => 16,
-    'literature' => 18,
-    'english' => 40,
+    16,
+    18,
+    40,
     // ... other data ...
 ];
 
 $options = [
+    'labels' => [
+        'math',
+        'literature',
+        'english',
+        // ... other data ...
+    ],
     'colors' => [
         '#CDDC39',
         '#00BCD4',
@@ -117,13 +135,19 @@ echo $svg;
 use Xanpena\SVGChartBuilder\SVGChartBuilder;
 
 $data = [
-    'math' => 16,
-    'literature' => 18,
-    'english' => 40,
+    16,
+    18,
+    40,
     // ... other data ...
 ];
 
 $options = [
+    'labels' => [
+        'math',
+        'literature',
+        'english',
+        // ... other data ...
+    ],
     'colors' => [
         '#CDDC39',
         '#00BCD4',
@@ -144,24 +168,33 @@ use Xanpena\SVGChartBuilder\SVGChartBuilder;
 
 $data = [
     'math' => [
-        '2020/2021' => 11,
-        '2021/2022' => 17,
-        '2023/2024' => 15,
+        11,
+        17,
+        15,
+        // ... other data ...
     ],
     'literature' => [
-        '2020/2021' => 21,
-        '2021/2022' => 21,
-        '2023/2024' => 23,
+        21,
+        21,
+        23,
+        // ... other data ...
     ],
     'english' => [
-        '2020/2021' => 14,
-        '2021/2022' => 9,
-        '2023/2024' => 18,
+        14,
+        9,
+        18,
+        // ... other data ...
     ]
     // ... other data ...
 ];
 
 $options = [
+    'labels' => [
+        '2020/2021',
+        '2021/2022',
+        '2023/2024',
+        // ... other data ...
+    ],
     'colors' => [
         '#CDDC39',
         '#00BCD4',

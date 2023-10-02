@@ -6,16 +6,7 @@ class LineChartBuilder extends BaseChartBuilder {
 
     protected int $width = 400;
     protected int $height = 500;
-    private array $series = [];
     protected array $axisColors = [];
-
-    /**
-     * Initialize properties.
-     *
-     */
-    protected function initialize($data) {
-        $this->series = array_keys($this->data[(key($this->data))]);
-    }
 
     /**
      * Generate the SVG representation of the chart.
@@ -58,14 +49,14 @@ class LineChartBuilder extends BaseChartBuilder {
     {
         $maxValue = $this->getMaxValue();
         $availableWidth = $this->width - 100;
-        $widthRatio = $availableWidth / (count($this->series) - 1);
+        $widthRatio = $availableWidth / (count(array_values($this->data)[0]) - 1);
 
         $baseX = 50;
         $baseY = 250;
 
         $counter = 0;
 
-        foreach ($this->data as $labels) {
+        foreach ($this->data as $datas) {
             $x = $baseX;
             $previousY = null;
 
@@ -73,8 +64,9 @@ class LineChartBuilder extends BaseChartBuilder {
                 $counter = 0;
             }
 
-            foreach ($labels as $label => $data) {
-                $isFirst = ($label === array_key_first($labels));
+            foreach ($datas as $index => $data) {
+                $isFirst = ($index === array_key_first($datas));
+
                 $proportion = $data / $maxValue;
                 $y = $baseY - $proportion * ($baseY - 50);
 
@@ -137,11 +129,11 @@ class LineChartBuilder extends BaseChartBuilder {
         $rotation = -45;
         $verticalOffset = (10 * abs(sin(deg2rad($rotation)))) + 30;
 
-        foreach ($this->series as $index => $series) {
-            $proportion = $index / (count($this->series) - 1);
+        foreach ($this->labels as $index => $label) {
+            $proportion = $index / (count($this->labels) - 1);
             $labelX = $baseX + $proportion * $availableWidth;
 
-            $this->svg .= '<text transform="rotate('.$rotation.', '.$labelX.', '.$baseY.')" x="'.$labelX.'" y="'.($baseY + $verticalOffset).'" font-family="Arial" font-size="14" text-anchor="middle" fill="'. $this->labelsColor .'">'.$series.'</text>';
+            $this->svg .= '<text transform="rotate('.$rotation.', '.$labelX.', '.$baseY.')" x="'.$labelX.'" y="'.($baseY + $verticalOffset).'" font-family="Arial" font-size="14" text-anchor="middle" fill="'. $this->labelsColor .'">'.$label.'</text>';
         }
 
         return $this;
@@ -157,14 +149,16 @@ class LineChartBuilder extends BaseChartBuilder {
         $baseY = 250;
 
         foreach ($labels as $index => $label) {
-            $proportion = $index / (count($labels) - 1);
-            $x = $baseX + $proportion * $availableWidth;
+            if (is_string($label)) {
+                $proportion = $index / (count($labels) - 1);
+                $x = $baseX + $proportion * $availableWidth;
 
-            $circleY = $baseY + 90;
-            $circleColor = $this->colors[$index];
+                $circleY = $baseY + 90;
+                $circleColor = $this->colors[$index];
 
-            $this->svg .= '<circle cx="' . $x . '" cy="' . $circleY . '" r="5" fill="' . $circleColor . '" />';
-            $this->svg .= '<text x="' . $x . '" y="' . ($circleY + 20) . '" font-family="Arial" font-size="12" text-anchor="middle" fill="' . $circleColor . '">' . $label . '</text>';
+                $this->svg .= '<circle cx="' . $x . '" cy="' . $circleY . '" r="5" fill="' . $circleColor . '" />';
+                $this->svg .= '<text x="' . $x . '" y="' . ($circleY + 20) . '" font-family="Arial" font-size="12" text-anchor="middle" fill="' . $circleColor . '">' . $label . '</text>';
+            }
         }
 
         return $this;
@@ -196,7 +190,7 @@ class LineChartBuilder extends BaseChartBuilder {
             $barHeight = ($tickValue / $maxValue) * ($baseY - 50);
             $y = $baseY - $barHeight;
 
-            $this->svg .= '<line x1="'.$baseX.'" y1="'.$y.'" x2="'.($baseX + 10.5).'" y2="'.$y.'" stroke="'. $this->labelsColor .'" stroke-width="0.5" />';
+            $this->svg .= '<line x1="'.$baseX.'" y1="'.$y.'" x2="'.($baseX + 10.5).'" y2="'.$y.'" stroke="'. $this->getAxisColor('y') .'" stroke-width="0.5" />';
 
             $labelY = $y + 5;
             $this->svg .= '<text x="'.$x.'" y="'.$labelY.'" font-family="Arial" font-size="12" fill="'. $this->labelsColor .'" text-anchor="end">'.$tickValue.'</text>';
