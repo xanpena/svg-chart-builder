@@ -2,32 +2,12 @@
 
 namespace Xanpena\SVGChartBuilder\Svg;
 
-class HorizontalBarChartBuilder {
+class HorizontalBarChartBuilder extends BaseChartBuilder {
 
-    private $colors = [
-        '#2196F3',
-        '#4CAF50',
-        '#F44336',
-        '#FFC107',
-        '#FF9800',
-        '#9C27B0',
-        '#E91E63',
-        '#9E9E9E',
-        '#00BCD4',
-        '#CDDC39',
-    ];
-    private array $data = [];
-    private int $width = 400;
-    private array $series = [];
-
-    private string $svg = '';
-    private int $height = 300;
-
-    public function __construct($data)
-    {
-        $this->data   = $data;
-        $this->series = array_keys($this->data);
-    }
+    protected int $width = 400;
+    protected int $height = 300;
+    protected array $axisColors = [];
+    protected string $dataColor = '#000000';
 
     /**
      * Generate the SVG representation of the chart.
@@ -37,10 +17,10 @@ class HorizontalBarChartBuilder {
     public function makeSvg()
     {
         $this->openSvgTag()
-            ->makeAxis()
-            ->makeCanvas()
-            ->makeSeries()
-            ->makeLabels()
+            ->drawGraphData()
+            ->drawSeries()
+            ->drawLabels()
+            ->drawAxis()
             ->closeSvgTag();
 
         return $this->svg;
@@ -51,54 +31,33 @@ class HorizontalBarChartBuilder {
      *
      * @return $this
      */
-    private function makeAxis()
+    private function drawAxis()
     {
-        $this->svg .= '<line x1="100" y1="' . ($this->height - 20) . '" x2="100" y2="20" stroke="black"></line>';
-        $this->svg .= '<line x1="100" y1="' . ($this->height - 20) . '" x2="' . ($this->width + 20) . '" y2="' . ($this->height - 20) . '" stroke="black"></line>';
+        $this->svg .= '<line x1="100" y1="' . ($this->height - 20) . '" x2="100" y2="20" stroke="'. $this->getAxisColor('y') .'"></line>';
+        $this->svg .= '<line x1="100" y1="' . ($this->height - 20) . '" x2="' . ($this->width + 20) . '" y2="' . ($this->height - 20) . '" stroke="'. $this->getAxisColor('x') .'"></line>';
 
         return $this;
     }
 
-    /**
-     * Open the SVG tag with the specified width and height.
-     *
-     * @return $this
-     */
-    private function openSvgTag()
-    {
-        $this->svg = '<svg width="'.($this->width + 20).'" height="'.($this->height + 20).'" xmlns="http://www.w3.org/2000/svg">';
-
-        return $this;
-    }
-
-    /**
-     * Close the SVG tag.
-     *
-     * @return $this
-     */
-    private function closeSvgTag()
-    {
-        $this->svg .= '</svg>';
-
-        return $this;
-    }
 
     /**
      * Generate the chart on SVG canvas.
      *
      * @return $this
      */
-    private function makeCanvas()
+    protected function drawGraphData()
     {
-        $numSeries = count($this->series);
-        $heightRatio = ($this->height - 120) / $numSeries;
-        $spaceRatio = 10;
+        $numData = count($this->data);
+        $availableVerticalSpace = $this->height - 40;
+
+        $totalSpace = $availableVerticalSpace - ($numData * 10);
+        $heightRatio = $totalSpace / $numData;
 
         $baseX = 100;
-        $baseY = $this->height - 43;
+        $baseY = $this->height - 20;
 
         $counter = 0;
-        $y = $baseY;
+        $y = $baseY - $heightRatio;
 
         foreach ($this->data as $key => $data) {
             if ($counter >= count($this->colors)) {
@@ -111,7 +70,11 @@ class HorizontalBarChartBuilder {
 
             $this->svg .= '<rect x="'.$x.'" y="'.$y.'" width="'.$barHeight.'" height="'.$heightRatio.'" fill="'.$this->colors[$counter].'"/>';
 
-            $y -= $heightRatio + $spaceRatio;
+            $textX = $x + $barHeight / 2;
+            $textY = $y + $heightRatio / 2;
+            $this->svg .= '<text x="'.$textX.'" y="'.$textY.'" font-family="Arial" font-size="12" fill="'. $this->dataColor .'" text-anchor="middle" dominant-baseline="middle">'.$data.'</text>';
+
+            $y -= $heightRatio + 10;
             $counter++;
         }
 
@@ -123,26 +86,26 @@ class HorizontalBarChartBuilder {
      *
      * @return $this
      */
-    private function makeLabels()
+    protected function drawLabels()
     {
-        $numSeries = count($this->series);
-        $heightRatio = ($this->height - 120) / $numSeries;
-        $spaceRatio = 10;
+        $numData = count($this->data);
+        $availableVerticalSpace = $this->height - 40;
+
+        $totalSpace = $availableVerticalSpace - ($numData * 10);
+        $heightRatio = $totalSpace / $numData;
 
         $baseX = 95;
         $baseY = $this->height - 20;
 
-        $x = $baseX - 5;
-        $y = $baseY - $heightRatio / 2;
+        $x = $baseX;
+        $y = $baseY - $heightRatio;
 
-        foreach ($this->series as $key => $series) {
-            if ($key >= count($this->colors)) {
-                $key = 0;
-            }
+        foreach ($this->labels as $key => $label) {
+            $textY = $y + $heightRatio / 2;
 
-            $this->svg .= '<text x="'.$x.'" y="'.$y.'" font-family="Arial" font-size="14" fill="'.$this->colors[$key].'" text-anchor="end" dominant-baseline="middle">'.$series.'</text>';
+            $this->svg .= '<text x="'.$x.'" y="'.$textY.'" font-family="Arial" font-size="14" fill="'.$this->colors[$key].'" text-anchor="end" dominant-baseline="middle">'.$label.'</text>';
 
-            $y -= $heightRatio + $spaceRatio;
+            $y -= $heightRatio + 10;
         }
 
         return $this;
@@ -153,21 +116,56 @@ class HorizontalBarChartBuilder {
      *
      * @return $this
      */
-    private function makeSeries()
+    protected function drawSeries()
     {
-        $baseX = 95;
-        $baseY = $this->height - 20;
-        $xSpacing = ($this->width - 120) / 10;
+        $numTicks = $this->calculateNumTicks();
+        $maxValue = max($this->data);
+        $interval = $maxValue / ($numTicks - 1);
 
-        $x = $baseX;
+        $baseX = 100;
+        $baseY = $this->height - 20;
+
         $y = $baseY + 20;
 
-        for ($i = 0; $i <= 10; $i++) {
-            $this->svg .= '<text x="'.$x.'" y="'.$y.'" font-family="Arial" font-size="12" fill="black" text-anchor="middle" dominant-baseline="text-before-edge">'.($i * 10).'</text>';
-            $x += $xSpacing;
+        for ($i = 0; $i < $numTicks; $i++) {
+            $tickValue = $i * $interval;
+
+            if ($tickValue != (int) $tickValue) {
+                $tickValue = round($tickValue, 2);
+            }
+
+            $barWidth = ($tickValue / $maxValue) * ($this->width - 120);
+            $x = $baseX + $barWidth;
+
+            $this->svg .= '<line x1="'.$x.'" y1="'.$baseY.'" x2="'.$x.'" y2="'.($baseY + 10.5).'" stroke="'. $this->getAxisColor('x') .'" stroke-width="0.5" />';
+
+            $labelX = $x;
+            $this->svg .= '<text x="'.$labelX.'" y="'.$y.'" font-family="Arial" font-size="12" fill="'. $this->labelsColor .'" text-anchor="middle" dominant-baseline="text-before-edge" transform="rotate(-45, '.$x.', '.$y.')">'.$tickValue.'</text>';
         }
 
         return $this;
+    }
+
+    protected function calculateNumTicks()
+    {
+        $maxValue = max($this->data);
+        $minValue = 0;
+        $range = $maxValue - $minValue;
+        $minInterval = 1;
+
+        $numTicks = max(2, ceil($range / $minInterval) + 1);
+        $numTicks = min($numTicks, 11);
+
+        return $numTicks;
+    }
+
+    protected function getAxisColor($axis)
+    {
+        if (empty($this->axisColors) === false && array_key_exists($axis, $this->axisColors)) {
+            return $this->axisColors[$axis];
+        }
+
+        return '#000000';
     }
 
 }

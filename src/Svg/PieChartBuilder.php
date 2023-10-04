@@ -2,30 +2,10 @@
 
 namespace Xanpena\SVGChartBuilder\Svg;
 
-class PieChartBuilder {
+class PieChartBuilder extends BaseChartBuilder {
 
-    private $colors = [
-        '#2196F3',
-        '#4CAF50',
-        '#F44336',
-        '#FFC107',
-        '#FF9800',
-        '#9C27B0',
-        '#E91E63',
-        '#9E9E9E',
-        '#00BCD4',
-        '#CDDC39',
-    ];
-    private array $data = [];
-    private int $width = 400;
-    private int $height = 400;
-
-    private string $svg = '';
-
-    public function __construct($data)
-    {
-        $this->data = $data;
-    }
+    protected int $width = 400;
+    protected int $height = 400;
 
     /**
      * Generate the SVG representation of the chart.
@@ -35,7 +15,7 @@ class PieChartBuilder {
     public function makeSvg()
     {
         $this->openSvgTag()
-            ->drawSlices()
+            ->drawGraphData()
             ->drawLabels()
             ->closeSvgTag();
 
@@ -43,41 +23,17 @@ class PieChartBuilder {
     }
 
     /**
-     * Open the SVG tag with the specified width and height.
-     *
-     * @return $this
-     */
-    private function openSvgTag()
-    {
-        $this->svg = '<svg width="'.($this->width).'" height="'.($this->height).'" xmlns="http://www.w3.org/2000/svg">';
-
-        return $this;
-    }
-
-    /**
-     * Close the SVG tag.
-     *
-     * @return $this
-     */
-    private function closeSvgTag()
-    {
-        $this->svg .= '</svg>';
-
-        return $this;
-    }
-
-    /**
      * Draw the slices of the pie chart based on the data.
      *
      * @return $this
      */
-    private function drawSlices()
+    protected function drawGraphData()
     {
         $totalValue = array_sum($this->data);
         $startAngle = 0;
         $counter = 0;
 
-        foreach ($this->data as $key => $value) {
+        foreach ($this->data as $value) {
             if ($value <= 0) {
                 continue;
             }
@@ -114,14 +70,19 @@ class PieChartBuilder {
      *
      * @return $this
      */
-    private function drawLabels()
+    protected function drawLabels()
     {
         $totalValue = array_sum($this->data);
         $startAngle = 0;
 
-        foreach ($this->data as $key => $value) {
+        foreach ($this->data as $index => $value) {
             if ($value <= 0) {
                 continue;
+            }
+
+            $label = $value;
+            if (array_key_exists($index, $this->labels)) {
+                $label = $this->labels[$index] . ' ('.$value.')';
             }
 
             $proportion = $value / $totalValue;
@@ -132,7 +93,7 @@ class PieChartBuilder {
             $labelX = $this->width / 2 + cos(deg2rad($midAngle)) * ($this->width / 4);
             $labelY = $this->height / 2 + sin(deg2rad($midAngle)) * ($this->height / 4);
 
-            $this->svg .= '<text x="'.$labelX.'" y="'.$labelY.'" font-family="Arial" font-size="14" fill="black" text-anchor="middle" dominant-baseline="middle">'.$key.' ('.$value.')</text>';
+            $this->svg .= '<text x="'.$labelX.'" y="'.$labelY.'" font-family="Arial" font-size="14" fill="'. $this->labelsColor .'" text-anchor="middle" dominant-baseline="middle">'.$label.'</text>';
 
             $startAngle = $endAngle;
         }
