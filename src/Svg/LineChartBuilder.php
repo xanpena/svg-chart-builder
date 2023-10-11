@@ -7,6 +7,7 @@ class LineChartBuilder extends BaseChartBuilder {
     protected int $width = 400;
     protected int $height = 500;
     protected array $axisColors = [];
+    protected bool $bannerInfo = true;
 
     /**
      * Generate the SVG representation of the chart.
@@ -49,7 +50,9 @@ class LineChartBuilder extends BaseChartBuilder {
     {
         $maxValue = $this->getMaxValue();
         $availableWidth = $this->width - 100;
-        $widthRatio = $availableWidth / (count(array_values($this->data)[0]) - 1);
+        $countData = (count(array_values($this->data)[0]));
+        $divisor = ($countData > 1) ? ($countData - 1) : $countData;
+        $widthRatio = $availableWidth / $divisor;
 
         $baseX = 50;
         $baseY = 250;
@@ -130,7 +133,9 @@ class LineChartBuilder extends BaseChartBuilder {
         $verticalOffset = (10 * abs(sin(deg2rad($rotation)))) + 30;
 
         foreach ($this->labels as $index => $label) {
-            $proportion = $index / (count($this->labels) - 1);
+            $countLabels = count($this->labels);
+            $divisor = ($countLabels > 1) ? ($countLabels - 1) : $countLabels;
+            $proportion = $index / $divisor;
             $labelX = $baseX + $proportion * $availableWidth;
 
             $this->svg .= '<text transform="rotate('.$rotation.', '.$labelX.', '.$baseY.')" x="'.$labelX.'" y="'.($baseY + $verticalOffset).'" font-family="Arial" font-size="14" text-anchor="middle" fill="'. $this->labelsColor .'">'.$label.'</text>';
@@ -142,22 +147,24 @@ class LineChartBuilder extends BaseChartBuilder {
 
     protected function drawCirclesWithText()
     {
-        $labels = array_keys($this->data);
-        $availableWidth = $this->width - 100;
+        if($this->bannerInfo) {
+            $labels = array_keys($this->data);
+            $availableWidth = $this->width - 100;
 
-        $baseX = 50;
-        $baseY = 250;
+            $baseX = 50;
+            $baseY = 250;
 
-        foreach ($labels as $index => $label) {
-            if (is_string($label)) {
-                $proportion = $index / (count($labels) - 1);
-                $x = $baseX + $proportion * $availableWidth;
+            foreach ($labels as $index => $label) {
+                if (is_string($label)) {
+                    $proportion = $index / (count($labels) - 1);
+                    $x = $baseX + $proportion * $availableWidth;
 
-                $circleY = $baseY + 90;
-                $circleColor = $this->colors[$index];
+                    $circleY = $baseY + 90;
+                    $circleColor = $this->colors[$index];
 
-                $this->svg .= '<circle cx="' . $x . '" cy="' . $circleY . '" r="5" fill="' . $circleColor . '" />';
-                $this->svg .= '<text x="' . $x . '" y="' . ($circleY + 20) . '" font-family="Arial" font-size="12" text-anchor="middle" fill="' . $circleColor . '">' . $label . '</text>';
+                    $this->svg .= '<circle cx="' . $x . '" cy="' . $circleY . '" r="5" fill="' . $circleColor . '" />';
+                    $this->svg .= '<text x="' . $x . '" y="' . ($circleY + 20) . '" font-family="Arial" font-size="12" text-anchor="middle" fill="' . $circleColor . '">' . $label . '</text>';
+                }
             }
         }
 

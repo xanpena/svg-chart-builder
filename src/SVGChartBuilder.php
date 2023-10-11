@@ -17,13 +17,15 @@ class SVGChartBuilder
     const OPTION_AXIS_COLORS = 'axisColors';
     const OPTION_LABELS_COLOR = 'labelsColor';
     const OPTION_DATA_COLOR = 'dataColor';
+    const OPTION_BANNER_INFO = 'bannerInfo';
 
     const OPTION_TYPES = [
         self::OPTION_LABELS,
         self::OPTION_COLORS,
         self::OPTION_AXIS_COLORS,
         self::OPTION_LABELS_COLOR,
-        self::OPTION_DATA_COLOR
+        self::OPTION_DATA_COLOR,
+        self::OPTION_BANNER_INFO
     ];
 
     const CHART_TYPE_BAR = 'bar';
@@ -165,12 +167,6 @@ class SVGChartBuilder
 
     protected function validateOptions($type, $data, $options)
     {
-        switch ($type) {
-            case self::CHART_TYPE_LINE:
-                $data = array_values($data)[0];
-                break;
-        }
-
         if (empty($options) === false) {
             if (!is_array($options)) {
                 throw new \InvalidArgumentException("Options must be a array");
@@ -179,18 +175,41 @@ class SVGChartBuilder
             foreach ($options as $option => $values) {
                 switch ($option) {
                     case self::OPTION_LABELS:
-                        if (count($data) !== count($values)) {
-                            throw new \InvalidArgumentException("The $option option must have the same number of data elements");
+                        switch ($type) {
+                            case self::CHART_TYPE_LINE:
+                                if (count(array_values($data)[0]) !== count($values)) {
+                                    throw new \InvalidArgumentException("The $option option must have the same number of data elements");
+                                }
+                                break;
+                            default:
+                                if (count($data) !== count($values)) {
+                                    throw new \InvalidArgumentException("The $option option must have the same number of data elements");
+                                }
+                                break;
                         }
                         break;
                     case self::OPTION_COLORS:
-                        if (count($data) !== count($values)) {
-                            throw new \InvalidArgumentException("The $option option must have the same number of data elements");
+                        switch ($type) {
+                            case self::CHART_TYPE_LINE:
+                                if (count(array_keys($data)) !== count($values)) {
+                                    throw new \InvalidArgumentException("The $option option must have the same number of data elements");
+                                }
+                                break;
+                            default:
+                                if (count($data) !== count($values)) {
+                                    throw new \InvalidArgumentException("The $option option must have the same number of data elements");
+                                }
+                                break;
                         }
                         break;
                     case self::OPTION_AXIS_COLORS:
                         if (array_keys($values) !== ["x", "y"]) {
-                            throw new \InvalidArgumentException("The $option aaa must be an array with the keys x and y and their respective colors");
+                            throw new \InvalidArgumentException("The $option must be an array with the keys x and y and their respective colors");
+                        }
+                        break;
+                    case self::OPTION_BANNER_INFO:
+                        if (!is_bool($values)) {
+                            throw new \InvalidArgumentException("The $option option must be a boolean");
                         }
                         break;
                     default:
