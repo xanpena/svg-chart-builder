@@ -16,6 +16,8 @@ class BarChartBuilder extends BaseChartBuilder {
      */
     public function makeSvg()
     {
+        $this->width = max($this->width, 100 + (count($this->data) * 30));
+
         $this->openSvgTag()
             ->drawSeries()
             ->drawGraphData()
@@ -49,10 +51,13 @@ class BarChartBuilder extends BaseChartBuilder {
         $numData = count($this->data);
         $availableWidth = $this->width - 100;
         $widthRatio = $availableWidth / $numData;
-        $spaceRatio = 10;
+        $spaceRatio = max(2, min(10, 40 / $numData));
 
         $baseX = 50;
         $baseY = 250;
+
+        $maxValue = max($this->data);
+        $maxValue = ($maxValue != 0) ? $maxValue : 1;
 
         $counter = 0;
         $x = $baseX;
@@ -62,16 +67,16 @@ class BarChartBuilder extends BaseChartBuilder {
                 $counter = 0;
             }
 
-            $proportion = $data / max($this->data);
+            $proportion = $data / $maxValue;
             $barHeight = $proportion * ($baseY - 50);
             $y = $baseY - $barHeight;
 
-            $this->svg .= '<rect x="'.$x.'" y="'.$y.'" width="'.$widthRatio.'" height="'.$barHeight.'" fill="'.$this->colors[$counter].'"/>';
+            $this->svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $widthRatio . '" height="' . $barHeight . '" fill="' . $this->colors[$counter] . '"/>';
 
             $valueX = $x + $widthRatio / 2;
             $valueY = $y + $barHeight / 2;
 
-            $this->svg .= '<text x="'.$valueX.'" y="'.$valueY.'" font-family="Arial" font-size="14" fill="'. $this->dataColor .'" text-anchor="middle" dominant-baseline="middle">'.$data.'</text>';
+            $this->svg .= '<text x="' . $valueX . '" y="' . $valueY . '" font-family="Arial" font-size="14" fill="' . $this->dataColor . '" text-anchor="middle" dominant-baseline="middle">' . $data . '</text>';
 
             $x += $widthRatio + $spaceRatio;
             $counter++;
@@ -90,7 +95,7 @@ class BarChartBuilder extends BaseChartBuilder {
         $numData = count($this->data);
         $availableWidth = $this->width - 100;
         $widthRatio = $availableWidth / $numData;
-        $spaceRatio = 10;
+        $spaceRatio = max(2, min(10, 40 / $numData));
 
         $baseX = 50;
         $baseY = 250;
@@ -124,6 +129,7 @@ class BarChartBuilder extends BaseChartBuilder {
     {
         $numTicks = $this->calculateNumTicks();
         $maxValue = max($this->data);
+        $maxValue = (($maxValue != 0) ? $maxValue : 1);
         $interval = $maxValue / ($numTicks - 1);
 
         $baseX = 40;

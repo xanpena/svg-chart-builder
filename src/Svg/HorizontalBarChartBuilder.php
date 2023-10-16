@@ -16,6 +16,8 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
      */
     public function makeSvg()
     {
+        $this->height = max($this->height, 100 + (count($this->data) * 30));
+
         $this->openSvgTag()
             ->drawGraphData()
             ->drawSeries()
@@ -56,6 +58,9 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
         $baseX = 100;
         $baseY = $this->height - 20;
 
+        $maxValue = max($this->data);
+        $maxValue = (($maxValue != 0) ? $maxValue : 1);
+
         $counter = 0;
         $y = $baseY - $heightRatio;
 
@@ -64,7 +69,7 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
                 $counter = 0;
             }
 
-            $proportion = $data / max($this->data);
+            $proportion = $data / $maxValue;
             $barHeight = $proportion * ($this->width - 120);
             $x = $baseX;
 
@@ -120,6 +125,7 @@ class HorizontalBarChartBuilder extends BaseChartBuilder {
     {
         $numTicks = $this->calculateNumTicks();
         $maxValue = max($this->data);
+        $maxValue = (($maxValue != 0) ? $maxValue : 1);
         $interval = $maxValue / ($numTicks - 1);
 
         $baseX = 100;

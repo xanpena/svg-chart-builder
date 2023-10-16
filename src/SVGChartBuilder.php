@@ -12,20 +12,28 @@ use Xanpena\SVGChartBuilder\Svg\{BarChartBuilder,
 
 class SVGChartBuilder
 {
+    const OPTION_WIDTH = 'width';
+    const OPTION_HEIGHT = 'height';
     const OPTION_LABELS = 'labels';
     const OPTION_COLORS = 'colors';
     const OPTION_AXIS_COLORS = 'axisColors';
     const OPTION_LABELS_COLOR = 'labelsColor';
     const OPTION_DATA_COLOR = 'dataColor';
     const OPTION_BANNER_INFO = 'bannerInfo';
+    const OPTION_DATA_TEXT = 'dataText';
+    const OPTION_POINTS_COLOR = 'pointsColor';
 
     const OPTION_TYPES = [
+        self::OPTION_WIDTH,
+        self::OPTION_HEIGHT,
         self::OPTION_LABELS,
         self::OPTION_COLORS,
         self::OPTION_AXIS_COLORS,
         self::OPTION_LABELS_COLOR,
         self::OPTION_DATA_COLOR,
-        self::OPTION_BANNER_INFO
+        self::OPTION_BANNER_INFO,
+        self::OPTION_DATA_TEXT,
+        self::OPTION_POINTS_COLOR,
     ];
 
     const CHART_TYPE_BAR = 'bar';
@@ -174,6 +182,12 @@ class SVGChartBuilder
 
             foreach ($options as $option => $values) {
                 switch ($option) {
+                    case self::OPTION_WIDTH:
+                    case self::OPTION_HEIGHT:
+                        if (!is_numeric($values)) {
+                            throw new \InvalidArgumentException("The $option option must be a numerical");
+                        }
+                        break;
                     case self::OPTION_LABELS:
                         switch ($type) {
                             case self::CHART_TYPE_LINE:
@@ -210,6 +224,28 @@ class SVGChartBuilder
                     case self::OPTION_BANNER_INFO:
                         if (!is_bool($values)) {
                             throw new \InvalidArgumentException("The $option option must be a boolean");
+                        }
+                        break;
+                    case self::OPTION_POINTS_COLOR:
+                    case self::OPTION_DATA_TEXT:
+                        switch ($type) {
+                            case self::CHART_TYPE_LINE:
+                                if (!is_array($values)) {
+                                    throw new \InvalidArgumentException("Each element of $option must have an array of values.");
+                                } else if (count($data) !== count($values)) {
+                                    throw new \InvalidArgumentException("Each element of $option must have the same number of elements than data");
+                                }
+
+                                foreach ($data as $key => $value) {
+                                    if (array_key_exists($key, $values) === false) {
+                                        throw new \InvalidArgumentException("Each element of $option must have the same keys than data");
+                                    } else if (count($value) !== count($values[$key])) {
+                                        throw new \InvalidArgumentException("Each element of $option must have the same number of elements than data");
+                                    }
+                                }
+                                break;
+                            default:
+                                break;
                         }
                         break;
                     default:
