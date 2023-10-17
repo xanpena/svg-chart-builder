@@ -19,7 +19,7 @@ class LineChartBuilder extends BaseChartBuilder {
     public function makeSvg()
     {
         $countData = count(array_values($this->data)[0]);
-        $this->width = max($this->width, 100 + ($countData * 30));
+        $this->width = max($this->width, 100 + ($countData * 60));
 
         $this->openSvgTag()
             ->drawAxis()

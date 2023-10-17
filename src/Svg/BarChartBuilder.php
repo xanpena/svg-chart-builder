@@ -51,7 +51,7 @@ class BarChartBuilder extends BaseChartBuilder {
         $numData = count($this->data);
         $availableWidth = $this->width - 100;
         $widthRatio = $availableWidth / $numData;
-        $spaceRatio = max(2, min(10, 40 / $numData));
+        $spaceRatio = max(5, min(10, 40 / $numData));
 
         $baseX = 50;
         $baseY = 250;
@@ -95,7 +95,7 @@ class BarChartBuilder extends BaseChartBuilder {
         $numData = count($this->data);
         $availableWidth = $this->width - 100;
         $widthRatio = $availableWidth / $numData;
-        $spaceRatio = max(2, min(10, 40 / $numData));
+        $spaceRatio = max(5, min(10, 40 / $numData));
 
         $baseX = 50;
         $baseY = 250;
