@@ -7,6 +7,8 @@ class LineChartBuilder extends BaseChartBuilder {
     protected int $width = 400;
     protected int $height = 500;
     protected array $axisColors = [];
+    protected array $dataText = [];
+    protected array $pointsColor = [];
     protected bool $bannerInfo = true;
 
     /**
@@ -16,6 +18,9 @@ class LineChartBuilder extends BaseChartBuilder {
      */
     public function makeSvg()
     {
+        $countData = count(array_values($this->data)[0]);
+        $this->width = max($this->width, 100 + ($countData * 60));
+
         $this->openSvgTag()
             ->drawAxis()
             ->drawSeries()
@@ -58,8 +63,9 @@ class LineChartBuilder extends BaseChartBuilder {
         $baseY = 250;
 
         $counter = 0;
+        $pointAndText = '';
 
-        foreach ($this->data as $datas) {
+        foreach ($this->data as $key => $datas) {
             $x = $baseX;
             $previousY = null;
 
@@ -80,20 +86,26 @@ class LineChartBuilder extends BaseChartBuilder {
                 $previousX = $x;
                 $previousY = $y;
 
-                $this->svg .= '<circle cx="' . $x . '" cy="' . $y . '" r="4" fill="'.$this->colors[$counter].'" />';
+                $pointColor = ((array_key_exists($key, $this->pointsColor) && array_key_exists($index, $this->pointsColor[$key])) ? $this->pointsColor[$key][$index] : $this->colors[$counter]);
 
-                $this->svg .= '<text x="' . $x + (($isFirst) ? 8 : 0) . '" y="' . ($y - 10) . '"
+                $pointAndText .= '<circle cx="' . $x . '" cy="' . $y . '" r="4" fill="'.$pointColor.'" />';
+
+                $text = ((array_key_exists($key, $this->dataText) && array_key_exists($index, $this->dataText[$key])) ? $this->dataText[$key][$index] : $data);
+
+                $pointAndText .= '<text x="' . $x + (($isFirst) ? 8 : 0) . '" y="' . ($y - 10) . '"
                 font-family="Arial"
                 font-size="12"
                 font-weight="bold"
                 text-anchor="middle"
-                fill="'.$this->colors[$counter].'">' . $data . '</text>';
+                fill="'.$this->colors[$counter].'">' . $text . '</text>';
 
                 $x += $widthRatio;
             }
 
             $counter++;
         }
+
+        $this->svg .= $pointAndText;
 
         return $this;
     }
